@@ -23,40 +23,58 @@
 
 <body>
     <h1>Migrate Data to Supabase</h1>
-    <button onclick="startMigration()" style="padding: 10px 20px; font-size: 16px;">Start Migration</button>
+    <div style="margin-bottom: 20px;">
+        <button onclick="startMigration()"
+            style="padding: 10px 20px; font-size: 16px; background: #fee2e2; color: #991b1b;">Clear All & Fresh Migrate
+            (Batch)</button>
+    </div>
     <div id="log"></div>
 
     <script>
         async function startMigration() {
             const logDiv = document.getElementById('log');
-            logDiv.innerHTML += '<p>Starting migration...</p>';
+            logDiv.innerHTML = '<p>Starting batch migration...</p>';
 
             if (typeof PRICE_LIST === 'undefined') {
                 logDiv.innerHTML += '<p style="color:red">Error: PRICE_LIST not found in pricelist.js</p>';
                 return;
             }
 
-            for (const item of PRICE_LIST) {
-                try {
-                    // Check if item exists to avoid duplicates (optional, simplified here)
-                    const { data: existing } = await _supabase.from('products').select('id').eq('name', item.name).single();
-
-                    if (existing) {
-                        logDiv.innerHTML += `<p>Skipping ${item.name} (already exists)</p>`;
-                    } else {
-                        await DB.addProduct({
-                            name: item.name,
-                            price: item.price,
-                            category: item.category || 'Uncategorized'
-                        });
-                        logDiv.innerHTML += `<p style="color:green">Uploaded: ${item.name}</p>`;
-                    }
-
-                } catch (e) {
-                    logDiv.innerHTML += `<p style="color:red">Failed: ${item.name} - ${e.message}</p>`;
-                }
+            // Step 1: Clear existing products
+            logDiv.innerHTML += '<p>Clearing existing products...</p>';
+            const { error: delError } = await _supabase.from('products').delete().neq('id', 0);
+            if (delError) {
+                logDiv.innerHTML += `<p style="color:red">Clear failed: ${delError.message}</p>`;
+                return;
             }
-            logDiv.innerHTML += '<h3>Migration Completed!</h3>';
+            logDiv.innerHTML += '<p style="color:green">Database cleared.</p>';
+
+            // Step 2: Prepare batch payload
+            const payload = PRICE_LIST.map(item => ({
+                name: item.name,
+                price: item.selling_price || 0,
+                buying_price: item.buying_price || 0,
+                category: item.category || 'Uncategorized'
+            }));
+
+            logDiv.innerHTML += `<p>Inserting ${payload.length} items in batch...</p>`;
+
+            // Step 3: Batch insert (Supabase supports bulk insert)
+            const { data, error } = await _supabase.from('products').insert(payload).select();
+
+            if (error) {
+                logDiv.innerHTML += `<p style="color:red">Batch insert failed: ${error.message}</p>`;
+                return;
+            }
+
+            logDiv.innerHTML += `<p style="color:green; font-weight:bold;">✅ Successfully inserted ${data.length} items!</p>`;
+
+            // Show all uploaded items
+            data.forEach(item => {
+                logDiv.innerHTML += `<p style="color:green; margin:2px 0; font-size:13px;">  ✓ ${item.name} (Buy: ${item.buying_price} Tk, Sell: ${item.price} Tk)</p>`;
+            });
+
+            logDiv.innerHTML += `<h3>Migration Completed! ${data.length} items processed.</h3>`;
         }
     </script>
 </body>

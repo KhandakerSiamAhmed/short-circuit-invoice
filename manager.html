@@ -268,6 +268,89 @@
         .flex {
             display: flex !important;
         }
+
+        /* === MOBILE ONLY === */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 15px;
+                text-align: center;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .nav-links {
+                display: flex;
+                gap: 8px;
+                width: 100%;
+            }
+
+            .nav-links button {
+                flex: 1;
+                margin-right: 0 !important;
+                font-size: 13px;
+                padding: 10px 8px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .filters {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .filters input,
+            .filters select {
+                width: 100%;
+            }
+
+            .grid-products {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .product-card {
+                padding: 15px;
+            }
+
+            .product-header h3 {
+                font-size: 15px;
+            }
+
+            .price-row {
+                font-size: 13px;
+            }
+
+            .modal {
+                margin: 15px;
+                padding: 20px;
+                max-width: calc(100vw - 30px);
+            }
+
+            .modal h3 {
+                font-size: 18px;
+            }
+
+            .modal input,
+            .modal select {
+                font-size: 16px;
+                /* Prevent iOS zoom */
+            }
+        }
     </style>
 </head>
 

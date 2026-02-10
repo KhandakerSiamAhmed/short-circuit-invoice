@@ -448,6 +448,220 @@
                 print-color-adjust: exact !important;
             }
         }
+
+        /* === CUSTOM SUGGESTION DROPDOWN === */
+        .suggestion-wrapper {
+            position: relative;
+        }
+
+        .suggestion-list {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .suggestion-list.active {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .suggestion-item:hover,
+        .suggestion-item.active {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .suggestion-item .cat {
+            font-size: 11px;
+            color: var(--muted);
+            float: right;
+        }
+
+        /* === MOBILE ONLY === */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .form-container {
+                padding: 15px;
+                border-radius: 12px;
+                margin-bottom: 20px;
+            }
+
+            #auth-controls {
+                position: static !important;
+                display: flex;
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+
+            #auth-controls button {
+                flex: 1;
+                font-size: 12px !important;
+                padding: 10px 8px !important;
+            }
+
+            .form-title h2 {
+                font-size: 1.3em;
+            }
+
+            .form-title p {
+                font-size: 0.8em;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .id-row {
+                flex-direction: column;
+            }
+
+            .item-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                padding: 12px;
+                background: white;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                margin-bottom: 12px;
+            }
+
+            .item-row .item-desc {
+                font-size: 16px;
+                /* Prevent iOS zoom */
+            }
+
+            .item-row .item-qty,
+            .item-row .item-price {
+                font-size: 16px;
+            }
+
+            .item-row .btn-remove {
+                justify-self: end;
+                width: 40px;
+                height: 40px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .items-box {
+                padding: 12px;
+            }
+
+            .options-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .btn-primary {
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            /* Invoice Preview - Compact on mobile */
+            #invoice-preview-screen {
+                min-height: auto;
+                margin-top: 20px;
+            }
+
+            .invoice-header {
+                flex-direction: column;
+                padding: 15px;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .brand {
+                justify-content: center;
+            }
+
+            .brand img {
+                height: 50px;
+            }
+
+            .brand-info h1 {
+                font-size: 1.2em;
+            }
+
+            .brand-info .tagline {
+                font-size: 0.8em;
+            }
+
+            .brand-info .social {
+                justify-content: center;
+                font-size: 0.75em;
+            }
+
+            .invoice-title {
+                text-align: center;
+            }
+
+            .invoice-title h2 {
+                font-size: 1.5em;
+            }
+
+            .meta-section {
+                flex-direction: column;
+                padding: 15px;
+                gap: 10px;
+            }
+
+            .meta-section .meta-block:last-child {
+                text-align: left !important;
+            }
+
+            .items-section {
+                padding: 10px;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 8px 6px;
+                font-size: 0.8em;
+            }
+
+            .summary-section {
+                padding: 10px;
+            }
+
+            .summary-box {
+                width: 100%;
+            }
+
+            .invoice-footer {
+                padding: 15px;
+            }
+
+            .footer-note,
+            .footer-contact {
+                font-size: 0.75em;
+            }
+
+            .footer-thanks {
+                font-size: 0.85em;
+            }
+        }
     </style>
 </head>
 
@@ -504,8 +718,11 @@
             <label>Items (Max 20 per page automatically)</label>
             <div id="itemsContainer">
                 <div class="item-row">
-                    <input type="text" class="item-desc" placeholder="Item description" list="price-list-options"
-                        oninput="handleItemInput(this)">
+                    <div class="suggestion-wrapper">
+                        <input type="text" class="item-desc" placeholder="Item description" list="price-list-options"
+                            oninput="handleItemInput(this)" onfocus="showSuggestions(this)" autocomplete="off">
+                        <div class="suggestion-list"></div>
+                    </div>
                     <input type="number" class="item-qty" placeholder="Qty" value="1" min="1">
                     <input type="number" class="item-price" placeholder="Price" min="0">
                     <button class="btn btn-remove" onclick="removeItem(this)">×</button>
@@ -654,6 +871,7 @@
 
         function handleItemInput(input) {
             const val = input.value;
+            // Auto-fill price if exact match
             if (typeof window.PRICE_LIST !== 'undefined') {
                 const item = window.PRICE_LIST.find(p => p.name === val);
                 if (item) {
@@ -663,7 +881,65 @@
                     updatePreview();
                 }
             }
+            // Show custom suggestions
+            showSuggestions(input);
         }
+
+        function showSuggestions(input) {
+            const wrapper = input.closest('.suggestion-wrapper');
+            if (!wrapper) return;
+            const list = wrapper.querySelector('.suggestion-list');
+            if (!list || !window.PRICE_LIST) return;
+
+            const val = input.value.toLowerCase().trim();
+            if (val.length === 0) {
+                list.classList.remove('active');
+                return;
+            }
+
+            const matches = window.PRICE_LIST.filter(p =>
+                p.name.toLowerCase().includes(val)
+            ).slice(0, 15);
+
+            if (matches.length === 0 || (matches.length === 1 && matches[0].name === input.value)) {
+                list.classList.remove('active');
+                return;
+            }
+
+            list.innerHTML = matches.map(m =>
+                `<div class="suggestion-item" data-name="${m.name}" data-price="${m.price}">
+                    ${m.name} <span class="cat">${m.category || ''}</span>
+                </div>`
+            ).join('');
+
+            list.querySelectorAll('.suggestion-item').forEach(item => {
+                item.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    input.value = item.dataset.name;
+                    const row = input.closest('.item-row');
+                    row.querySelector('.item-price').value = item.dataset.price;
+                    list.classList.remove('active');
+                    updatePreview();
+                });
+                item.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    input.value = item.dataset.name;
+                    const row = input.closest('.item-row');
+                    row.querySelector('.item-price').value = item.dataset.price;
+                    list.classList.remove('active');
+                    updatePreview();
+                });
+            });
+
+            list.classList.add('active');
+        }
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.suggestion-wrapper')) {
+                document.querySelectorAll('.suggestion-list').forEach(l => l.classList.remove('active'));
+            }
+        });
 
         function attachListeners() {
             document.querySelectorAll('input, select, textarea').forEach(el => {
@@ -676,7 +952,10 @@
             const row = document.createElement('div');
             row.className = 'item-row';
             row.innerHTML = `
-                <input type="text" class="item-desc" placeholder="Item description" list="price-list-options" oninput="handleItemInput(this)">
+                <div class="suggestion-wrapper">
+                    <input type="text" class="item-desc" placeholder="Item description" list="price-list-options" oninput="handleItemInput(this)" onfocus="showSuggestions(this)" autocomplete="off">
+                    <div class="suggestion-list"></div>
+                </div>
                 <input type="number" class="item-qty" placeholder="Qty" value="1" min="1">
                 <input type="number" class="item-price" placeholder="Price" min="0">
                 <button class="btn btn-remove" onclick="removeItem(this)">×</button>

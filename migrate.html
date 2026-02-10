@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Migrate to Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="db.js"></script>
+    <script src="pricelist.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        pre {
+            background: #f0f0f0;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Migrate Data to Supabase</h1>
+    <button onclick="startMigration()" style="padding: 10px 20px; font-size: 16px;">Start Migration</button>
+    <div id="log"></div>
+
+    <script>
+        async function startMigration() {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += '<p>Starting migration...</p>';
+
+            if (typeof PRICE_LIST === 'undefined') {
+                logDiv.innerHTML += '<p style="color:red">Error: PRICE_LIST not found in pricelist.js</p>';
+                return;
+            }
+
+            for (const item of PRICE_LIST) {
+                try {
+                    // Check if item exists to avoid duplicates (optional, simplified here)
+                    const { data: existing } = await _supabase.from('products').select('id').eq('name', item.name).single();
+
+                    if (existing) {
+                        logDiv.innerHTML += `<p>Skipping ${item.name} (already exists)</p>`;
+                    } else {
+                        await DB.addProduct({
+                            name: item.name,
+                            price: item.price,
+                            category: item.category || 'Uncategorized'
+                        });
+                        logDiv.innerHTML += `<p style="color:green">Uploaded: ${item.name}</p>`;
+                    }
+
+                } catch (e) {
+                    logDiv.innerHTML += `<p style="color:red">Failed: ${item.name} - ${e.message}</p>`;
+                }
+            }
+            logDiv.innerHTML += '<h3>Migration Completed!</h3>';
+        }
+    </script>
+</body>
+
+</html>

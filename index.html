@@ -496,7 +496,8 @@
             <label>Items (Max 20 per page automatically)</label>
             <div id="itemsContainer">
                 <div class="item-row">
-                    <input type="text" class="item-desc" placeholder="Item description">
+                    <input type="text" class="item-desc" placeholder="Item description" list="price-list-options"
+                        oninput="handleItemInput(this)">
                     <input type="number" class="item-qty" placeholder="Qty" value="1" min="1">
                     <input type="number" class="item-price" placeholder="Price" min="0">
                     <button class="btn btn-remove" onclick="removeItem(this)">×</button>
@@ -590,6 +591,11 @@
                     <span>Total</span>
                     <span id="dispTotal">0 Tk</span>
                 </div>
+                <div class="summary-row no-print"
+                    style="margin-top: 10px; border-top: 1px dashed #ddd; padding-top: 5px; color: green;">
+                    <span>Net Profit</span>
+                    <span id="dispProfit">0 Tk</span>
+                </div>
             </div>
         </div>
 
@@ -600,14 +606,62 @@
         </div>
     </div>
 
+    <div id="auth-controls" class="no-print" style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
+        <button onclick="window.location.href='manager.html'"
+            style="padding: 8px 16px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">Manager
+            Dashboard</button>
+        <button onclick="Auth.logout()"
+            style="padding: 8px 16px; background: #dc2626; color: white; border: none; border-radius: 4px; cursor: pointer;">Logout</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="db.js"></script>
+    <script src="auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('invDate').value = new Date().toISOString().split('T')[0];
             const savedId = localStorage.getItem('sc_invoice_num') || '1001';
             document.getElementById('invId').value = 'INV-' + savedId;
             attachListeners();
+            populatePriceList();
             updatePreview();
         });
+
+        async function populatePriceList() {
+            const datalist = document.getElementById('price-list-options') || document.createElement('datalist');
+            if (!datalist.id) {
+                datalist.id = 'price-list-options';
+                document.body.appendChild(datalist);
+            }
+            datalist.innerHTML = ''; // Clear existing options
+
+            // Fetch from Supabase
+            if (typeof DB !== 'undefined') {
+                window.PRICE_LIST = await DB.fetchProducts(); // Store globally for handleItemInput
+
+                if (window.PRICE_LIST && window.PRICE_LIST.length > 0) {
+                    window.PRICE_LIST.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.name;
+                        datalist.appendChild(option);
+                    });
+                }
+            }
+        }
+
+        function handleItemInput(input) {
+            const val = input.value;
+            if (typeof window.PRICE_LIST !== 'undefined') {
+                const item = window.PRICE_LIST.find(p => p.name === val);
+                if (item) {
+                    const row = input.closest('.item-row');
+                    const priceInput = row.querySelector('.item-price');
+                    priceInput.value = item.price;
+                    updatePreview();
+                }
+            }
+        }
 
         function attachListeners() {
             document.querySelectorAll('input, select, textarea').forEach(el => {
@@ -620,7 +674,7 @@
             const row = document.createElement('div');
             row.className = 'item-row';
             row.innerHTML = `
-                <input type="text" class="item-desc" placeholder="Item description">
+                <input type="text" class="item-desc" placeholder="Item description" list="price-list-options" oninput="handleItemInput(this)">
                 <input type="number" class="item-qty" placeholder="Qty" value="1" min="1">
                 <input type="number" class="item-price" placeholder="Price" min="0">
                 <button class="btn btn-remove" onclick="removeItem(this)">×</button>
@@ -707,6 +761,25 @@
 
             document.getElementById('dispDelivery').textContent = delivery.toFixed(2) + ' Tk';
             document.getElementById('dispTotal').textContent = grandTotal.toFixed(2) + ' Tk';
+
+            // Calculate Profit
+            let totalProfit = 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                const desc = row.querySelector('.item-desc').value;
+                const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+
+                if (desc && window.PRICE_LIST) {
+                    const item = window.PRICE_LIST.find(p => p.name === desc);
+                    if (item) {
+                        const buyingPrice = parseFloat(item.buying_price) || 0;
+                        if (buyingPrice > 0) {
+                            totalProfit += (price - buyingPrice) * qty;
+                        }
+                    }
+                }
+            });
+            document.getElementById('dispProfit').textContent = totalProfit.toFixed(2) + ' Tk';
         }
 
         function generatePrintPages() {

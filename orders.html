@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Short Circuit — Order Management</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #1a1a2e;
+            --accent: #2563eb;
+            --accent-light: #3b82f6;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --surface: #ffffff;
+            --bg: #f0f2f5;
+            --border: #e5e7eb;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --radius: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background: white;
+            padding: 20px 25px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        header h1 {
+            font-size: 22px;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-nav {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-nav:hover {
+            background: #f3f4f6;
+        }
+
+        .btn-logout {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .btn-logout:hover {
+            background: #b91c1c;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .filters input,
+        .filters select {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .filters input {
+            flex: 1;
+        }
+
+        .filters input:focus,
+        .filters select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Order Card */
+        .order-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .order-card:hover {
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .order-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 22px;
+            cursor: pointer;
+            gap: 15px;
+        }
+
+        .order-summary:hover {
+            background: #fafbfc;
+        }
+
+        .order-main {
+            flex: 1;
+        }
+
+        .order-no {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .order-meta {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .order-meta span {
+            margin-right: 15px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .order-total {
+            font-weight: 700;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .expand-icon {
+            font-size: 18px;
+            color: var(--muted);
+            transition: transform 0.2s;
+        }
+
+        .order-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Order Details */
+        .order-details {
+            display: none;
+            padding: 0 22px 22px;
+            border-top: 1px solid var(--border);
+        }
+
+        .order-card.expanded .order-details {
+            display: block;
+        }
+
+        .detail-section {
+            margin-top: 18px;
+        }
+
+        .detail-section h4 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .customer-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-block {
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .info-block .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--muted);
+            letter-spacing: 0.3px;
+            margin-bottom: 4px;
+        }
+
+        .info-block .value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Items table */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .items-table th {
+            text-align: left;
+            padding: 8px 10px;
+            background: var(--bg);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--muted);
+        }
+
+        .items-table td {
+            padding: 10px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .items-table .total-row td {
+            font-weight: 700;
+            border-top: 2px solid var(--primary);
+        }
+
+        /* Checklist */
+        .checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: var(--bg);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .check-item:hover {
+            background: #e8eaed;
+        }
+
+        .check-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--success);
+            cursor: pointer;
+        }
+
+        .check-item label {
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .check-item.checked {
+            background: #d1fae5;
+        }
+
+        .check-item.checked label {
+            text-decoration: line-through;
+            color: var(--success);
+        }
+
+        /* Action buttons */
+        .order-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .btn-action {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-invoice {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-invoice:hover {
+            background: var(--accent-light);
+        }
+
+        .btn-complete {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-complete:hover {
+            background: #047857;
+        }
+
+        .btn-complete:disabled {
+            background: #d1d5db;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--muted);
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 60px;
+            color: var(--muted);
+            background: white;
+            border-radius: var(--radius);
+        }
+
+        .no-orders .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        /* === PRINT INVOICE === */
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            header,
+            .filters,
+            .no-print {
+                display: none !important;
+            }
+
+            .order-card {
+                border: none;
+                box-shadow: none;
+                margin: 0;
+            }
+
+            .order-card:not(.printing) {
+                display: none !important;
+            }
+
+            .order-card.printing .order-summary {
+                display: none;
+            }
+
+            .order-card.printing .order-details {
+                display: block !important;
+                padding: 0;
+                border: none;
+            }
+
+            .print-invoice-page {
+                display: block !important;
+            }
+        }
+
+        .print-invoice-page {
+            display: none;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 15px;
+                text-align: center;
+            }
+
+            h1 {
+                font-size: 18px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .nav-links .btn-nav {
+                flex: 1;
+                min-width: calc(50% - 5px);
+                text-align: center;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .order-summary {
+                padding: 14px 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .order-total {
+                width: 100%;
+                text-align: right;
+            }
+
+            .customer-info {
+                grid-template-columns: 1fr;
+            }
+
+            .order-actions {
+                flex-direction: column;
+            }
+
+            .btn-action {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📦 Order Management</h1>
+            <div class="nav-links">
+                <button class="btn-nav" onclick="window.location.href='index.html'">Invoice Generator</button>
+                <button class="btn-nav" onclick="window.location.href='manager.html'">Price Manager</button>
+                <button class="btn-nav" onclick="window.location.href='shop.html'">Shop Page</button>
+                <button class="btn-nav btn-logout" onclick="Auth.logout()">Logout</button>
+            </div>
+        </header>
+
+        <div class="filters no-print">
+            <input type="text" id="searchOrders" placeholder="Search by order number or customer name..."
+                oninput="filterOrders()">
+            <select id="statusFilter" onchange="filterOrders()">
+                <option value="">All Orders</option>
+                <option value="pending">Pending</option>
+                <option value="progress">In Progress</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+
+        <div id="ordersList">
+            <div class="loading">⏳ Loading orders...</div>
+        </div>
+    </div>
+
+    <!-- Print Invoice Template -->
+    <div class="print-invoice-page" id="printInvoice"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="db.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        let allOrders = [];
+        let orderItemsCache = {};
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Auth check happens in auth.js
+            setTimeout(loadOrders, 500);
+        });
+
+        async function loadOrders() {
+            allOrders = await DB.fetchOrders();
+            renderOrders(allOrders);
+        }
+
+        function getOrderStatus(order) {
+            if (order.completed) return 'completed';
+            if (order.ordered_to_wholesaler || order.got_supply || order.delivered) return 'progress';
+            return 'pending';
+        }
+
+        function filterOrders() {
+            const search = document.getElementById('searchOrders').value.toLowerCase().trim();
+            const status = document.getElementById('statusFilter').value;
+
+            let filtered = allOrders;
+            if (search) {
+                filtered = filtered.filter(o =>
+                    (o.order_no || '').toLowerCase().includes(search) ||
+                    (o.customer_name || '').toLowerCase().includes(search)
+                );
+            }
+            if (status) {
+                filtered = filtered.filter(o => getOrderStatus(o) === status);
+            }
+            renderOrders(filtered);
+        }
+
+        function renderOrders(orders) {
+            const container = document.getElementById('ordersList');
+
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="no-orders"><div class="icon">📭</div><p>No orders found</p></div>';
+                return;
+            }
+
+            container.innerHTML = orders.map(order => {
+                const status = getOrderStatus(order);
+                const badgeClass = status === 'completed' ? 'badge-completed' : status === 'progress' ? 'badge-progress' : 'badge-pending';
+                const badgeText = status === 'completed' ? 'Completed' : status === 'progress' ? 'In Progress' : 'Pending';
+                const date = new Date(order.order_date || order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                return `
+                    <div class="order-card" id="order-${order.id}">
+                        <div class="order-summary" onclick="toggleOrder(${order.id})">
+                            <div class="order-main">
+                                <div class="order-no">${order.order_no || 'SC-' + String(order.id).padStart(4, '0')}</div>
+                                <div class="order-meta">
+                                    <span>👤 ${order.customer_name}</span>
+                                    <span>📅 ${date}</span>
+                                    <span>📍 ${order.delivery_location}</span>
+                                </div>
+                            </div>
+                            <span class="badge ${badgeClass}">${badgeText}</span>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                        <div class="order-details" id="details-${order.id}">
+                            <div class="loading" style="padding:20px;">Loading details...</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function toggleOrder(orderId) {
+            const card = document.getElementById(`order-${orderId}`);
+            const isExpanded = card.classList.contains('expanded');
+
+            if (isExpanded) {
+                card.classList.remove('expanded');
+                return;
+            }
+
+            card.classList.add('expanded');
+
+            // Load items if not cached
+            if (!orderItemsCache[orderId]) {
+                orderItemsCache[orderId] = await DB.fetchOrderItems(orderId);
+            }
+
+            const order = allOrders.find(o => o.id === orderId);
+            const items = orderItemsCache[orderId];
+            const total = items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
+            const deliveryCharge = order.delivery_location === 'Outside IUT' ? 120 : 0;
+
+            const details = document.getElementById(`details-${orderId}`);
+            details.innerHTML = `
+                <div class="detail-section">
+                    <h4>Customer Information</h4>
+                    <div class="customer-info">
+                        <div class="info-block">
+                            <div class="label">Name</div>
+                            <div class="value">${order.customer_name}</div>
+                        </div>
+                        <div class="info-block">
+                            <div class="label">Phone</div>
+                            <div class="value">${order.customer_phone}</div>
+                        </div>
+                        <div class="info-block">
+                            <div class="label">Delivery</div>
+                            <div class="value">${order.delivery_location}</div>
+                        </div>
+                    </div>
+                    <div class="info-block" style="margin-top:8px;">
+                        <div class="label">Address</div>
+                        <div class="value">${order.customer_address}</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h4>Items Ordered</h4>
+                    <table class="items-table">
+                        <thead>
+                            <tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+                        </thead>
+                        <tbody>
+                            ${items.map(item => `
+                                <tr>
+                                    <td>${item.product_name}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>${item.unit_price} Tk</td>
+                                    <td>${(item.quantity * item.unit_price).toLocaleString()} Tk</td>
+                                </tr>
+                            `).join('')}
+                            ${deliveryCharge > 0 ? `
+                                <tr>
+                                    <td colspan="3">Delivery Charge (Outside IUT)</td>
+                                    <td>${deliveryCharge} Tk</td>
+                                </tr>
+                            ` : ''}
+                            <tr class="total-row">
+                                <td colspan="3">Grand Total</td>
+                                <td>${(total + deliveryCharge).toLocaleString()} Tk</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                ${!order.completed ? `
+                <div class="detail-section">
+                    <h4>Order Progress</h4>
+                    <div class="checklist">
+                        <div class="check-item ${order.ordered_to_wholesaler ? 'checked' : ''}" onclick="toggleCheck(${orderId}, 'ordered_to_wholesaler', this)">
+                            <input type="checkbox" ${order.ordered_to_wholesaler ? 'checked' : ''}>
+                            <label>Ordered to wholesaler</label>
+                        </div>
+                        <div class="check-item ${order.got_supply ? 'checked' : ''}" onclick="toggleCheck(${orderId}, 'got_supply', this)">
+                            <input type="checkbox" ${order.got_supply ? 'checked' : ''}>
+                            <label>Got the supply</label>
+                        </div>
+                        <div class="check-item ${order.delivered ? 'checked' : ''}" onclick="toggleCheck(${orderId}, 'delivered', this)">
+                            <input type="checkbox" ${order.delivered ? 'checked' : ''}>
+                            <label>Delivered to customer</label>
+                        </div>
+                    </div>
+                </div>
+                ` : `
+                <div class="detail-section">
+                    <h4>Status</h4>
+                    <div style="padding:15px; background:#d1fae5; border-radius:8px; text-align:center; font-weight:600; color:#065f46;">
+                        ✅ Order Completed
+                    </div>
+                </div>
+                `}
+
+                <div class="order-actions">
+                    <button class="btn-action btn-invoice" onclick="generateInvoice(${orderId})">🖨️ Generate Invoice</button>
+                    ${!order.completed ? `
+                        <button class="btn-action btn-complete" id="completeBtn-${orderId}"
+                            ${!(order.ordered_to_wholesaler && order.got_supply && order.delivered) ? 'disabled' : ''}
+                            onclick="completeOrder(${orderId})">
+                            ✓ Mark Completed
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        async function toggleCheck(orderId, field, el) {
+            const checkbox = el.querySelector('input[type="checkbox"]');
+            const newValue = !checkbox.checked;
+            checkbox.checked = newValue;
+
+            if (newValue) {
+                el.classList.add('checked');
+            } else {
+                el.classList.remove('checked');
+            }
+
+            try {
+                const updated = await DB.updateOrderChecklist(orderId, field, newValue);
+
+                // Update local cache
+                const orderIdx = allOrders.findIndex(o => o.id === orderId);
+                if (orderIdx > -1) {
+                    allOrders[orderIdx] = { ...allOrders[orderIdx], ...updated };
+                }
+
+                // Update complete button
+                const order = allOrders[orderIdx];
+                const completeBtn = document.getElementById(`completeBtn-${orderId}`);
+                if (completeBtn) {
+                    completeBtn.disabled = !(order.ordered_to_wholesaler && order.got_supply && order.delivered);
+                }
+
+                // Update badge
+                const card = document.getElementById(`order-${orderId}`);
+                const badge = card.querySelector('.badge');
+                const status = getOrderStatus(order);
+                badge.className = `badge ${status === 'completed' ? 'badge-completed' : status === 'progress' ? 'badge-progress' : 'badge-pending'}`;
+                badge.textContent = status === 'completed' ? 'Completed' : status === 'progress' ? 'In Progress' : 'Pending';
+
+            } catch (err) {
+                console.error(err);
+                // Revert
+                checkbox.checked = !newValue;
+                el.classList.toggle('checked');
+            }
+        }
+
+        async function completeOrder(orderId) {
+            if (!confirm('Mark this order as completed?')) return;
+
+            try {
+                await DB.markOrderCompleted(orderId);
+
+                const orderIdx = allOrders.findIndex(o => o.id === orderId);
+                if (orderIdx > -1) {
+                    allOrders[orderIdx].completed = true;
+                }
+
+                // Re-expand to show updated UI
+                const card = document.getElementById(`order-${orderId}`);
+                card.classList.remove('expanded');
+                toggleOrder(orderId);
+
+                // Update badge
+                const badge = card.querySelector('.badge');
+                badge.className = 'badge badge-completed';
+                badge.textContent = 'Completed';
+
+            } catch (err) {
+                console.error(err);
+                alert('Error completing order.');
+            }
+        }
+
+        function generateInvoice(orderId) {
+            const order = allOrders.find(o => o.id === orderId);
+            const items = orderItemsCache[orderId] || [];
+            const total = items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
+            const deliveryCharge = order.delivery_location === 'Outside IUT' ? 120 : 0;
+            const date = new Date(order.order_date || order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            const printArea = document.getElementById('printInvoice');
+            printArea.innerHTML = `
+                <div style="width:210mm; min-height:297mm; padding:40px; font-family:'Inter',sans-serif; position:relative;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid #1a1a2e; padding-bottom:20px; margin-bottom:25px;">
+                        <div>
+                            <h1 style="font-size:28px; color:#1a1a2e; margin:0;">SHORT CIRCUIT</h1>
+                            <p style="color:#6b7280; font-size:13px; margin:3px 0 0;">Electronics Shop • IUT</p>
+                        </div>
+                        <div style="text-align:right;">
+                            <h2 style="font-size:22px; color:#1a1a2e; margin:0;">INVOICE</h2>
+                            <p style="color:#6b7280; font-size:14px; margin:3px 0 0;">#${order.order_no || 'SC-' + String(order.id).padStart(4, '0')}</p>
+                            <p style="color:#6b7280; font-size:13px; margin:3px 0 0;">${date}</p>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; margin-bottom:30px;">
+                        <div>
+                            <h4 style="font-size:11px; text-transform:uppercase; color:#6b7280; margin:0 0 8px;">Bill To</h4>
+                            <p style="font-weight:600; font-size:15px; margin:0;">${order.customer_name}</p>
+                            <p style="color:#6b7280; font-size:13px; margin:4px 0;">${order.customer_phone}</p>
+                            <p style="color:#6b7280; font-size:13px; margin:0;">${order.customer_address}</p>
+                        </div>
+                        <div style="text-align:right;">
+                            <h4 style="font-size:11px; text-transform:uppercase; color:#6b7280; margin:0 0 8px;">Delivery</h4>
+                            <p style="font-weight:600; font-size:14px; margin:0;">${order.delivery_location}</p>
+                        </div>
+                    </div>
+
+                    <table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:30px;">
+                        <thead>
+                            <tr style="background:#1a1a2e; color:white;">
+                                <th style="padding:10px 15px; text-align:left;">#</th>
+                                <th style="padding:10px 15px; text-align:left;">Product</th>
+                                <th style="padding:10px 15px; text-align:center;">Qty</th>
+                                <th style="padding:10px 15px; text-align:right;">Price</th>
+                                <th style="padding:10px 15px; text-align:right;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${items.map((item, i) => `
+                                <tr style="border-bottom:1px solid #e5e7eb;">
+                                    <td style="padding:10px 15px;">${i + 1}</td>
+                                    <td style="padding:10px 15px;">${item.product_name}</td>
+                                    <td style="padding:10px 15px; text-align:center;">${item.quantity}</td>
+                                    <td style="padding:10px 15px; text-align:right;">${item.unit_price} Tk</td>
+                                    <td style="padding:10px 15px; text-align:right;">${(item.quantity * item.unit_price).toLocaleString()} Tk</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+
+                    <div style="display:flex; justify-content:flex-end;">
+                        <table style="width:250px; font-size:14px;">
+                            <tr>
+                                <td style="padding:6px 0;">Subtotal</td>
+                                <td style="padding:6px 0; text-align:right; font-weight:600;">${total.toLocaleString()} Tk</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:6px 0;">Delivery</td>
+                                <td style="padding:6px 0; text-align:right;">${deliveryCharge > 0 ? deliveryCharge + ' Tk' : 'Free'}</td>
+                            </tr>
+                            <tr style="border-top:2px solid #1a1a2e;">
+                                <td style="padding:10px 0; font-weight:700; font-size:16px;">Total</td>
+                                <td style="padding:10px 0; text-align:right; font-weight:700; font-size:16px;">${(total + deliveryCharge).toLocaleString()} Tk</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="position:absolute; bottom:40px; left:40px; right:40px; text-align:center; border-top:1px solid #e5e7eb; padding-top:15px;">
+                        <p style="font-size:12px; color:#6b7280;">Thank you for shopping with Short Circuit!</p>
+                        <p style="font-size:11px; color:#9ca3af;">fb.com/ShortCircuitIUT</p>
+                    </div>
+                </div>
+            `;
+
+            printArea.style.display = 'block';
+            setTimeout(() => {
+                window.print();
+                printArea.style.display = 'none';
+            }, 300);
+        }
+    </script>
+</body>
+
+</html>

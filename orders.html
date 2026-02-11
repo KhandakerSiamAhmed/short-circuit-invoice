@@ -731,6 +731,7 @@
     <script>
         let allOrders = [];
         let orderItemsCache = {};
+        let productStockCache = {}; // Cache for product stock levels
 
         document.addEventListener('DOMContentLoaded', async () => {
             // Auth check happens in auth.js
@@ -812,6 +813,14 @@
 
             card.classList.add('expanded');
 
+            // Load products once to get current stock levels
+            if (Object.keys(productStockCache).length === 0) {
+                const products = await DB.fetchProducts();
+                products.forEach(p => {
+                    productStockCache[p.name] = { id: p.id, stock: p.stock };
+                });
+            }
+
             // Load items if not cached
             if (!orderItemsCache[orderId]) {
                 orderItemsCache[orderId] = await DB.fetchOrderItems(orderId);
@@ -850,25 +859,32 @@
                     <h4>Items Ordered</h4>
                     <table class="items-table">
                         <thead>
-                            <tr><th>Product</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+                            <tr><th>Product</th><th>Qty</th><th>Price</th><th>Stock</th><th>Total</th></tr>
                         </thead>
                         <tbody>
-                            ${items.map(item => `
-                                <tr>
-                                    <td>${item.product_name}</td>
-                                    <td>${item.quantity}</td>
-                                    <td>${item.unit_price} Tk</td>
-                                    <td>${(item.quantity * item.unit_price).toLocaleString()} Tk</td>
-                                </tr>
-                            `).join('')}
+                             ${items.map(item => {
+                const prodData = productStockCache[item.product_name];
+                const currentStock = prodData ? (prodData.stock !== null ? prodData.stock : 'N/A') : 'N/A';
+                const stockColor = prodData && prodData.stock <= 5 ? 'color: red; font-weight: bold;' : '';
+
+                return `
+                                    <tr>
+                                        <td>${item.product_name}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>${item.unit_price} Tk</td>
+                                        <td style="${stockColor}">${currentStock}</td>
+                                        <td>${(item.quantity * item.unit_price).toLocaleString()} Tk</td>
+                                    </tr>
+                                `;
+            }).join('')}
                             ${deliveryCharge > 0 ? `
                                 <tr>
                                     <td colspan="3">Delivery Charge (Outside IUT)</td>
                                     <td>${deliveryCharge} Tk</td>
                                 </tr>
                             ` : ''}
-                            <tr class="total-row">
-                                <td colspan="3">Grand Total</td>
+                             <tr class="total-row">
+                                <td colspan="4">Grand Total</td>
                                 <td>${(total + deliveryCharge).toLocaleString()} Tk</td>
                             </tr>
                         </tbody>
@@ -887,9 +903,13 @@
                             <input type="checkbox" ${order.got_supply ? 'checked' : ''}>
                             <label>Got the supply</label>
                         </div>
-                        <div class="check-item ${order.delivered ? 'checked' : ''}" onclick="toggleCheck(${orderId}, 'delivered', this)">
+                         <div class="check-item ${order.delivered ? 'checked' : ''}" onclick="toggleCheck(${orderId}, 'delivered', this)">
                             <input type="checkbox" ${order.delivered ? 'checked' : ''}>
                             <label>Delivered to customer</label>
+                        </div>
+                        <div class="check-item ${order.stock_reduced ? 'checked' : ''}" onclick="toggleStockCheck(${orderId}, this)">
+                            <input type="checkbox" ${order.stock_reduced ? 'checked' : ''}>
+                            <label>Deduct from current stock</label>
                         </div>
                     </div>
                 </div>
@@ -954,6 +974,55 @@
 
             } catch (err) {
                 console.error(err);
+                // Revert
+                checkbox.checked = !newValue;
+                el.classList.toggle('checked');
+            }
+        }
+
+        async function toggleStockCheck(orderId, el) {
+            const checkbox = el.querySelector('input[type="checkbox"]');
+            const newValue = !checkbox.checked;
+
+            if (newValue && !confirm('Are you sure you want to deduct the ordered quantities from current stock?')) return;
+            if (!newValue && !confirm('Do you want to restore the stock levels?')) return;
+
+            checkbox.checked = newValue;
+            if (newValue) el.classList.add('checked');
+            else el.classList.remove('checked');
+
+            try {
+                const items = orderItemsCache[orderId];
+                if (!items) throw new Error('Items not loaded');
+
+                // Update stock for each product
+                for (const item of items) {
+                    const prodData = productStockCache[item.product_name];
+                    if (prodData && prodData.stock !== null) {
+                        const diff = newValue ? -item.quantity : item.quantity;
+                        const newStock = Math.max(0, prodData.stock + diff);
+
+                        await DB.updateProduct(prodData.id, { stock: newStock });
+                        prodData.stock = newStock; // Update cache
+                    }
+                }
+
+                // Save status in order
+                const updated = await DB.updateOrderChecklist(orderId, 'stock_reduced', newValue);
+
+                // Update local cache
+                const orderIdx = allOrders.findIndex(o => o.id === orderId);
+                if (orderIdx > -1) {
+                    allOrders[orderIdx].stock_reduced = newValue;
+                }
+
+                // Refresh details to show updated stock values in table
+                toggleOrder(orderId); // Close
+                toggleOrder(orderId); // Re-open
+
+            } catch (err) {
+                console.error(err);
+                alert('Error updating stock: ' + err.message);
                 // Revert
                 checkbox.checked = !newValue;
                 el.classList.toggle('checked');

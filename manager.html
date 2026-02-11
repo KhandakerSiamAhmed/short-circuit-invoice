@@ -377,6 +377,7 @@
                 <div><input type="number" id="newBuyingPrice" placeholder="Buying Price (Tk)" required></div>
                 <div><input type="number" id="newPrice" placeholder="Selling Price (Tk)" required></div>
                 <div><input type="text" id="newCategory" placeholder="Category" list="categoryList"></div>
+                <div><input type="number" id="newStock" placeholder="Current Stock (Optional)"></div>
                 <button type="submit" class="btn-primary">Add Item</button>
             </form>
             <datalist id="categoryList"></datalist>
@@ -419,6 +420,11 @@
                     <label style="display:block; margin-bottom:5px; font-size:14px; font-weight:500;">Category</label>
                     <input type="text" id="editCategory" list="categoryList">
                 </div>
+                <div>
+                    <label style="display:block; margin-bottom:5px; font-size:14px; font-weight:500;">Current
+                        Stock</label>
+                    <input type="number" id="editStock">
+                </div>
             </div>
             <div class="modal-actions">
                 <button type="button" onclick="closeModal()" class="btn-sm" style="margin-right:10px;">Cancel</button>
@@ -440,9 +446,10 @@
                 const buying_price = parseFloat(document.getElementById('newBuyingPrice').value) || 0;
                 const price = parseFloat(document.getElementById('newPrice').value) || 0;
                 const category = document.getElementById('newCategory').value || 'Uncategorized';
+                const stock = document.getElementById('newStock').value ? parseInt(document.getElementById('newStock').value) : null;
 
                 try {
-                    await DB.addProduct({ name, buying_price, price, category });
+                    await DB.addProduct({ name, buying_price, price, category, stock });
                     document.getElementById('addForm').reset();
                     loadProducts();
                 } catch (err) {
@@ -536,6 +543,11 @@
                         </div>
                     </div>
 
+                    <div style="margin-bottom: 15px; font-size: 14px; color: #4b5563;">
+                        <span class="label">Stock:</span>
+                        <span class="val ${p.stock <= 5 ? 'text-red val-bold' : ''}">${p.stock !== null && p.stock !== undefined ? p.stock : 'N/A'}</span>
+                    </div>
+ 
                     <div class="actions">
                         <button onclick="openEdit(${p.id})" class="btn-sm btn-edit">Edit</button>
                         <button onclick="deleteItem(${p.id})" class="btn-sm btn-del">Delete</button>
@@ -567,6 +579,7 @@
             document.getElementById('editBuyingPrice').value = p.buying_price || 0;
             document.getElementById('editPrice').value = p.price;
             document.getElementById('editCategory').value = p.category || '';
+            document.getElementById('editStock').value = p.stock !== null ? p.stock : '';
 
             document.getElementById('editModal').classList.remove('hidden');
             document.getElementById('editModal').classList.add('flex');
@@ -583,9 +596,10 @@
             const buying_price = parseFloat(document.getElementById('editBuyingPrice').value) || 0;
             const price = parseFloat(document.getElementById('editPrice').value) || 0;
             const category = document.getElementById('editCategory').value;
+            const stock = document.getElementById('editStock').value === '' ? null : parseInt(document.getElementById('editStock').value);
 
             try {
-                await DB.updateProduct(id, { name, buying_price, price, category });
+                await DB.updateProduct(id, { name, buying_price, price, category, stock });
                 closeModal();
                 loadProducts();
             } catch (err) {

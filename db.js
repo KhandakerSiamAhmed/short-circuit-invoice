@@ -1,11 +1,7 @@
-// Initialize Supabase Client
-// Ensure supabase-js is loaded before this script
 const { createClient } = supabase;
-
 const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const DB = {
-    // Fetch all products
     async fetchProducts() {
         const { data, error } = await _supabase
             .from('products')
@@ -19,7 +15,6 @@ const DB = {
         return data;
     },
 
-    // Add a new product
     async addProduct(product) {
         const { data, error } = await _supabase
             .from('products')
@@ -33,7 +28,6 @@ const DB = {
         return data[0];
     },
 
-    // Update a product
     async updateProduct(id, updates) {
         const { data, error } = await _supabase
             .from('products')
@@ -48,7 +42,6 @@ const DB = {
         return data[0];
     },
 
-    // Delete a product
     async deleteProduct(id) {
         const { error } = await _supabase
             .from('products')
@@ -61,11 +54,8 @@ const DB = {
         }
     },
 
-    // === ORDER METHODS ===
-
-    // Create a new order with items
+    // orders
     async createOrder(orderData, items) {
-        // Insert order
         const { data: order, error: orderError } = await _supabase
             .from('orders')
             .insert([{
@@ -82,7 +72,6 @@ const DB = {
             throw orderError;
         }
 
-        // Insert order items
         const orderItems = items.map(item => ({
             order_id: order.id,
             product_name: item.product_name,
@@ -102,7 +91,6 @@ const DB = {
         return order;
     },
 
-    // Fetch all orders (newest first)
     async fetchOrders() {
         const { data, error } = await _supabase
             .from('orders')
@@ -116,7 +104,6 @@ const DB = {
         return data;
     },
 
-    // Fetch items for a specific order
     async fetchOrderItems(orderId) {
         const { data, error } = await _supabase
             .from('order_items')
@@ -130,7 +117,6 @@ const DB = {
         return data;
     },
 
-    // Update order checklist
     async updateOrderChecklist(orderId, field, value) {
         const { data, error } = await _supabase
             .from('orders')
@@ -146,7 +132,6 @@ const DB = {
         return data;
     },
 
-    // Mark order as completed
     async markOrderCompleted(orderId) {
         const { data, error } = await _supabase
             .from('orders')
@@ -162,7 +147,6 @@ const DB = {
         return data;
     },
 
-    // Delete an order (cascade deletes items)
     async deleteOrder(orderId) {
         const { error } = await _supabase
             .from('orders')

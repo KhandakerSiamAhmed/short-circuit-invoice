@@ -1,5 +1,4 @@
 
-// Authentication Logic
 const Auth = {
     async checkSession() {
         if (!_supabase) {
@@ -8,12 +7,10 @@ const Auth = {
         }
         const { data: { session } } = await _supabase.auth.getSession();
 
-        // If no session and we are NOT on the login page, redirect
         if (!session && !window.location.href.includes('login')) {
             window.location.href = '/login';
         }
 
-        // If session and we ARE on the login page, redirect to index
         if (session && window.location.href.includes('login')) {
             window.location.href = '/invoice';
         }
@@ -37,7 +34,6 @@ const Auth = {
     }
 };
 
-// Auto-check session on load
 document.addEventListener('DOMContentLoaded', () => {
     Auth.checkSession();
 });

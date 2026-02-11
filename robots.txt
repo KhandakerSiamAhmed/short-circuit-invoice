@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /manager
+Disallow: /orders
+Disallow: /invoice
+Disallow: /migrate
+
+Sitemap: https://short-circuit-iut.vercel.app/sitemap.xml

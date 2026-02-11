@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Price Manager - Short Circuit</title>
     <link rel="icon" href="Short Circuit .PNG">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -11,10 +12,10 @@
     <script src="db.js"></script>
     <script src="auth.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: #f3f4f6;
             margin: 0;
             padding: 20px;
@@ -270,7 +271,7 @@
             display: flex !important;
         }
 
-        /* === MOBILE ONLY === */
+        /* mobile */
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -526,7 +527,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             await loadProducts();
 
-            // Add Form Submit
+
             document.getElementById('addForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('newName').value;
@@ -550,7 +551,7 @@
                 }
             });
 
-            // Filter & Search listeners
+
             document.getElementById('filterCategory').addEventListener('change', renderProducts);
             document.getElementById('search').addEventListener('input', renderProducts);
         });
@@ -573,7 +574,7 @@
             const filterSelect = document.getElementById('filterCategory');
             const dataList = document.getElementById('categoryList');
 
-            // Keep "All Categories"
+
             filterSelect.innerHTML = '<option value="">All Categories</option>';
             dataList.innerHTML = '';
 
@@ -653,7 +654,7 @@
             });
         }
 
-        // --- Edit / Delete Actions ---
+
 
         window.deleteItem = async (id) => {
             if (confirm('Are you sure you want to delete this item?')) {
@@ -711,14 +712,14 @@
             }
         };
 
-        // --- Bundle Logic ---
+
         let currentAddBundleItems = [];
         let currentEditBundleItems = [];
 
         function updateProductDatalist() {
             const datalist = document.getElementById('allProductsList');
             datalist.innerHTML = allProducts
-                .filter(p => !p.is_bundle) // Don't allow bundling bundles (for simplicity)
+                .filter(p => !p.is_bundle)
                 .map(p => `<option value="${p.name}">`)
                 .join('');
         }

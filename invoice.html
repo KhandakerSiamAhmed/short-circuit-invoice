@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Short Circuit - Invoice Generator</title>
     <link rel="icon" href="Short Circuit .PNG">
     <style>
@@ -32,7 +33,7 @@
             color: var(--text);
         }
 
-        /* === FORM STYLES === */
+        /* form */
         .form-container {
             max-width: 700px;
             margin: 0 auto 40px;
@@ -182,7 +183,7 @@
             gap: 15px;
         }
 
-        /* === INVOICE PREVIEW (SCREEN) === */
+        /* invoice preview */
         #invoice-preview-screen {
             max-width: 210mm;
             min-height: 297mm;
@@ -192,7 +193,7 @@
             position: relative;
         }
 
-        /* Common invoice styles (used in both screen and print) */
+
         .invoice-header {
             background: var(--primary);
             color: white;
@@ -356,7 +357,7 @@
             border-top: 1px solid var(--border);
         }
 
-        /* Sticky footer positioning handled in print media query */
+
 
         .footer-note {
             font-style: italic;
@@ -380,7 +381,7 @@
             display: none;
         }
 
-        /* === PRINT STYLES === */
+        /* print */
         @media print {
             @page {
                 size: A4;
@@ -413,7 +414,7 @@
                 page-break-after: always;
                 box-sizing: border-box;
                 overflow: hidden;
-                /* Strict strict strict */
+
             }
 
             .print-page:last-child {
@@ -450,7 +451,7 @@
             }
         }
 
-        /* === CUSTOM SUGGESTION DROPDOWN === */
+        /* suggestions */
         .suggestion-wrapper {
             position: relative;
         }
@@ -494,7 +495,7 @@
             float: right;
         }
 
-        /* === MOBILE ONLY === */
+        /* mobile */
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -763,7 +764,7 @@
                 <div class="brand-info">
                     <h1>SHORT CIRCUIT</h1>
                     <div class="tagline">Electronics Shop</div>
-                    <a href="https://www.facebook.com/ShortCircuitIUT" class="social" target="_blank">
+                    <a href="https://www.facebook.com/profile.php?id=61556341177118" class="social" target="_blank">
                         <svg viewBox="0 0 24 24">
                             <path
                                 d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -862,9 +863,9 @@
             }
             datalist.innerHTML = ''; // Clear existing options
 
-            // Fetch from Supabase
+
             if (typeof DB !== 'undefined') {
-                window.PRICE_LIST = await DB.fetchProducts(); // Store globally for handleItemInput
+                window.PRICE_LIST = await DB.fetchProducts();
 
                 if (window.PRICE_LIST && window.PRICE_LIST.length > 0) {
                     window.PRICE_LIST.forEach(item => {
@@ -878,7 +879,7 @@
 
         function handleItemInput(input) {
             const val = input.value;
-            // Auto-fill price if exact match
+
             if (typeof window.PRICE_LIST !== 'undefined') {
                 const item = window.PRICE_LIST.find(p => p.name === val);
                 if (item) {
@@ -888,7 +889,7 @@
                     updatePreview();
                 }
             }
-            // Show custom suggestions
+
             showSuggestions(input);
         }
 
@@ -941,7 +942,7 @@
             list.classList.add('active');
         }
 
-        // Close suggestions when clicking outside
+
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.suggestion-wrapper')) {
                 document.querySelectorAll('.suggestion-list').forEach(l => l.classList.remove('active'));
@@ -1050,7 +1051,7 @@
             document.getElementById('dispDelivery').textContent = delivery.toFixed(2) + ' Tk';
             document.getElementById('dispTotal').textContent = grandTotal.toFixed(2) + ' Tk';
 
-            // Calculate Profit
+
             let totalProfit = 0;
             document.querySelectorAll('.item-row').forEach(row => {
                 const desc = row.querySelector('.item-desc').value;
@@ -1104,7 +1105,7 @@
                             <div class="brand-info">
                                 <h1>SHORT CIRCUIT</h1>
                                 <div class="tagline">Electronics Shop</div>
-                                <a href="https://www.facebook.com/ShortCircuitIUT" class="social">
+                                <a href="https://www.facebook.com/profile.php?id=61556341177118" class="social">
                                     <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                                     ShortCircuitIUT
                                 </a>
@@ -1117,7 +1118,7 @@
                     </div>
                 `;
 
-                // Meta Info (Show on all pages for context)
+
                 const metaHtml = `
                     <div class="meta-section">
                         <div class="meta-block">
@@ -1160,7 +1161,7 @@
                 });
                 itemsHtml += `</tbody></table></div>`;
 
-                // Summary (Last Page Only)
+
                 let summaryHtml = '';
                 if (isLastPage) {
                     const subtotal = document.getElementById('dispSubtotal').textContent;

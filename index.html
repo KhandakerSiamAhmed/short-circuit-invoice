@@ -4,7 +4,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Short Circuit — Electronics Shop</title>
+    <title>Short Circuit — Electronics Shop | IUT Components & Parts</title>
+    <meta name="description"
+        content="Short Circuit is an electronics shop at IUT offering affordable electronic components, Arduino boards, sensors, resistors, capacitors, and custom bundles. Order online with free delivery inside IUT.">
+    <meta name="keywords"
+        content="Short Circuit, electronics shop, IUT, electronic components, Arduino, sensors, resistors, capacitors, ESP32, breadboard, LED, Bangladesh, short circuit iut, short circuit electronics">
+    <meta name="author" content="Khandaker Siam Ahmed">
+    <link rel="canonical" href="https://short-circuit-iut.vercel.app/">
+
+    <!-- open graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Short Circuit — Electronics Shop at IUT">
+    <meta property="og:description"
+        content="Affordable electronic components, Arduino boards, sensors, and custom bundles. Free delivery inside IUT campus.">
+    <meta property="og:url" content="https://short-circuit-iut.vercel.app/">
+    <meta property="og:site_name" content="Short Circuit">
+    <meta property="og:image" content="https://short-circuit-iut.vercel.app/Short Circuit .PNG">
+    <meta property="og:locale" content="en_BD">
+
+    <!-- twitter card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Short Circuit — Electronics Shop at IUT">
+    <meta name="twitter:description"
+        content="Affordable electronic components, Arduino boards, sensors, and custom bundles. Order online.">
+    <meta name="twitter:image" content="https://short-circuit-iut.vercel.app/Short Circuit .PNG">
+
+    <!-- structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Store",
+        "name": "Short Circuit",
+        "description": "Electronics shop at IUT offering affordable electronic components, Arduino boards, sensors, resistors, capacitors, and custom bundles.",
+        "url": "https://short-circuit-iut.vercel.app",
+        "logo": "https://short-circuit-iut.vercel.app/Short Circuit .PNG",
+        "image": "https://short-circuit-iut.vercel.app/Short Circuit .PNG",
+        "telephone": "",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Gazipur",
+            "addressRegion": "Dhaka",
+            "addressCountry": "BD"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "23.9477",
+            "longitude": "90.3801"
+        },
+        "sameAs": [
+            "https://www.facebook.com/profile.php?id=61556341177118"
+        ],
+        "founder": {
+            "@type": "Person",
+            "name": "Khandaker Siam Ahmed"
+        },
+        "priceRange": "৳",
+        "currenciesAccepted": "BDT",
+        "paymentAccepted": "Cash, bKash",
+        "openingHours": "Mo-Sa 09:00-21:00"
+    }
+    </script>
+
     <link rel="icon" href="Short Circuit .PNG">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -35,7 +95,7 @@
             min-height: 100vh;
         }
 
-        /* === HEADER === */
+        /* header */
         .shop-header {
             background: var(--primary);
             color: white;
@@ -104,7 +164,7 @@
             text-align: center;
         }
 
-        /* === SEARCH & FILTER BAR === */
+        /* toolbar */
         .toolbar {
             max-width: 1200px;
             margin: 25px auto 0;
@@ -158,7 +218,7 @@
             border-color: var(--accent);
         }
 
-        /* === PRODUCT GRID === */
+        /* products */
         .products-container {
             max-width: 1200px;
             margin: 20px auto;
@@ -288,7 +348,7 @@
             background: var(--success);
         }
 
-        /* === CART SIDEBAR === */
+        /* cart sidebar */
         .cart-overlay {
             position: fixed;
             top: 0;
@@ -438,7 +498,7 @@
             transform: none;
         }
 
-        /* === CHECKOUT MODAL === */
+        /* checkout */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -579,7 +639,7 @@
             cursor: not-allowed;
         }
 
-        /* === ORDER CONFIRMATION === */
+        /* confirmation */
         .confirmation {
             text-align: center;
             padding: 20px 0;
@@ -623,7 +683,7 @@
             cursor: pointer;
         }
 
-        /* === INVOICE PREVIEW IN CART === */
+        /* cart invoice preview */
         .invoice-preview {
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -666,7 +726,7 @@
             padding-top: 10px;
         }
 
-        /* === MOBILE === */
+        /* mobile */
         @media (max-width: 768px) {
             .shop-header {
                 padding: 0 15px;
@@ -742,7 +802,7 @@
             }
         }
 
-        /* === NO PRODUCTS === */
+        /* empty state */
         .no-products {
             text-align: center;
             padding: 60px 20px;
@@ -779,154 +839,158 @@
 
 <body>
 
-    <!-- HEADER -->
-    <header class="shop-header">
-        <div class="shop-brand">
-            <img src="Short Circuit .PNG" alt="Logo" onerror="this.style.display='none'">
-            <div>
-                <h1>SHORT CIRCUIT</h1>
-                <div class="tagline">Electronics Shop • IUT</div>
+    <main>
+        <!-- HEADER -->
+        <header class="shop-header">
+            <div class="shop-brand">
+                <img src="Short Circuit .PNG" alt="Logo" onerror="this.style.display='none'">
+                <div>
+                    <h1>SHORT CIRCUIT</h1>
+                    <div class="tagline">Electronics Shop • IUT</div>
+                </div>
+            </div>
+            <button class="cart-btn" onclick="toggleCart()">
+                🛒 Cart <span class="cart-badge" id="cartCount">0</span>
+            </button>
+        </header>
+
+        <!-- SEARCH & FILTER -->
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search products..." oninput="filterProducts()">
+            </div>
+            <select class="cat-select" id="catFilter" onchange="filterProducts()">
+                <option value="">All Categories</option>
+            </select>
+        </div>
+
+        <!-- PRODUCTS -->
+        <div class="products-container">
+            <!-- Bundles Section -->
+            <div id="bundlesSection" class="hidden" style="margin-bottom: 40px;">
+                <h2
+                    style="font-size: 20px; margin-bottom: 15px; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+                    🔥 Featured Bundles
+                </h2>
+                <div class="product-grid" id="bundlesGrid"></div>
+            </div>
+
+            <div class="product-count" id="productCount"></div>
+            <div class="product-grid" id="productGrid">
+                <div class="no-products">
+                    <div class="icon">⏳</div>
+                    <p>Loading products...</p>
+                </div>
             </div>
         </div>
-        <button class="cart-btn" onclick="toggleCart()">
-            🛒 Cart <span class="cart-badge" id="cartCount">0</span>
-        </button>
-    </header>
 
-    <!-- SEARCH & FILTER -->
-    <div class="toolbar">
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search products..." oninput="filterProducts()">
-        </div>
-        <select class="cat-select" id="catFilter" onchange="filterProducts()">
-            <option value="">All Categories</option>
-        </select>
-    </div>
+        <!-- CART OVERLAY -->
+        <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
 
-    <!-- PRODUCTS -->
-    <div class="products-container">
-        <!-- Bundles Section -->
-        <div id="bundlesSection" class="hidden" style="margin-bottom: 40px;">
-            <h2
-                style="font-size: 20px; margin-bottom: 15px; color: var(--primary); display: flex; align-items: center; gap: 8px;">
-                🔥 Featured Bundles
-            </h2>
-            <div class="product-grid" id="bundlesGrid"></div>
-        </div>
-
-        <div class="product-count" id="productCount"></div>
-        <div class="product-grid" id="productGrid">
-            <div class="no-products">
-                <div class="icon">⏳</div>
-                <p>Loading products...</p>
+        <!-- CART PANEL -->
+        <div class="cart-panel" id="cartPanel">
+            <div class="cart-header">
+                <h2>🛒 Your Cart</h2>
+                <button class="cart-close" onclick="toggleCart()">✕</button>
+            </div>
+            <div class="cart-body" id="cartBody">
+                <div class="cart-empty">Your cart is empty</div>
+            </div>
+            <div class="cart-footer" id="cartFooter" style="display:none;">
+                <div class="cart-total">
+                    <span>Total</span>
+                    <span id="cartTotal">0 Tk</span>
+                </div>
+                <button class="checkout-btn" onclick="openCheckout()">Proceed to Order</button>
             </div>
         </div>
-    </div>
 
-    <!-- CART OVERLAY -->
-    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
-
-    <!-- CART PANEL -->
-    <div class="cart-panel" id="cartPanel">
-        <div class="cart-header">
-            <h2>🛒 Your Cart</h2>
-            <button class="cart-close" onclick="toggleCart()">✕</button>
-        </div>
-        <div class="cart-body" id="cartBody">
-            <div class="cart-empty">Your cart is empty</div>
-        </div>
-        <div class="cart-footer" id="cartFooter" style="display:none;">
-            <div class="cart-total">
-                <span>Total</span>
-                <span id="cartTotal">0 Tk</span>
+        <!-- CHECKOUT MODAL -->
+        <div class="modal-overlay" id="checkoutModal">
+            <div class="modal" id="checkoutContent">
+                <!-- Dynamic content -->
             </div>
-            <button class="checkout-btn" onclick="openCheckout()">Proceed to Order</button>
         </div>
-    </div>
 
-    <!-- CHECKOUT MODAL -->
-    <div class="modal-overlay" id="checkoutModal">
-        <div class="modal" id="checkoutContent">
-            <!-- Dynamic content -->
-        </div>
-    </div>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="config.js"></script>
+        <script src="db.js"></script>
+        <script>
+            let allProducts = [];
+            let cart = [];
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
-    <script src="db.js"></script>
-    <script>
-        let allProducts = [];
-        let cart = [];
 
-        // Load products on page load
-        document.addEventListener('DOMContentLoaded', async () => {
-            allProducts = await DB.fetchProducts();
-            // Filter out items with 0 price
-            allProducts = allProducts.filter(p => p.price && p.price > 0);
+            document.addEventListener('DOMContentLoaded', async () => {
+                try {
+                    allProducts = await DB.fetchProducts();
+                    allProducts = allProducts.filter(p => p.price && p.price > 0);
 
-            // Populate category filter
-            const categories = [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
-            const catFilter = document.getElementById('catFilter');
-            categories.forEach(cat => {
-                const opt = document.createElement('option');
-                opt.value = cat;
-                opt.textContent = cat;
-                catFilter.appendChild(opt);
+                    const categories = [...new Set(allProducts.map(p => p.category).filter(Boolean))].sort();
+                    const catFilter = document.getElementById('catFilter');
+                    categories.forEach(cat => {
+                        const opt = document.createElement('option');
+                        opt.value = cat;
+                        opt.textContent = cat;
+                        catFilter.appendChild(opt);
+                    });
+
+                    renderProducts(allProducts);
+                } catch (e) {
+                    console.error(e);
+                    document.getElementById('productGrid').innerHTML = '<div class="no-products"><div class="icon">⚠️</div><p>Failed to load products. Please refresh the page.</p></div>';
+                }
             });
 
-            renderProducts(allProducts);
-        });
+            function filterProducts() {
+                const search = document.getElementById('searchInput').value.toLowerCase().trim();
+                const cat = document.getElementById('catFilter').value;
 
-        function filterProducts() {
-            const search = document.getElementById('searchInput').value.toLowerCase().trim();
-            const cat = document.getElementById('catFilter').value;
-
-            let filtered = allProducts;
-            if (search) {
-                filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
-            }
-            if (cat) {
-                filtered = filtered.filter(p => p.category === cat);
-            }
-            renderProducts(filtered);
-        }
-
-        function renderProducts(products) {
-            const grid = document.getElementById('productGrid');
-            const bundlesGrid = document.getElementById('bundlesGrid');
-            const bundlesSection = document.getElementById('bundlesSection');
-
-            const bundles = products.filter(p => p.is_bundle);
-            const regular = products.filter(p => !p.is_bundle);
-
-            document.getElementById('productCount').textContent = `${products.length} product${products.length !== 1 ? 's' : ''} found`;
-
-            // Render Bundles
-            if (bundles.length > 0) {
-                bundlesSection.classList.remove('hidden');
-                bundlesGrid.innerHTML = bundles.map(p => renderProductCard(p)).join('');
-            } else {
-                bundlesSection.classList.add('hidden');
+                let filtered = allProducts;
+                if (search) {
+                    filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
+                }
+                if (cat) {
+                    filtered = filtered.filter(p => p.category === cat);
+                }
+                renderProducts(filtered);
             }
 
-            // Render Regular
-            if (regular.length === 0) {
-                grid.innerHTML = '<div class="no-products"><div class="icon">🔍</div><p>No products match your search</p></div>';
-                return;
+            function renderProducts(products) {
+                const grid = document.getElementById('productGrid');
+                const bundlesGrid = document.getElementById('bundlesGrid');
+                const bundlesSection = document.getElementById('bundlesSection');
+
+                const bundles = products.filter(p => p.is_bundle);
+                const regular = products.filter(p => !p.is_bundle);
+
+                document.getElementById('productCount').textContent = `${products.length} product${products.length !== 1 ? 's' : ''} found`;
+
+                // Render Bundles
+                if (bundles.length > 0) {
+                    bundlesSection.classList.remove('hidden');
+                    bundlesGrid.innerHTML = bundles.map(p => renderProductCard(p)).join('');
+                } else {
+                    bundlesSection.classList.add('hidden');
+                }
+
+                // Render Regular
+                if (regular.length === 0) {
+                    grid.innerHTML = '<div class="no-products"><div class="icon">🔍</div><p>No products match your search</p></div>';
+                    return;
+                }
+
+                grid.innerHTML = regular.map(p => renderProductCard(p)).join('');
             }
 
-            grid.innerHTML = regular.map(p => renderProductCard(p)).join('');
-        }
-
-        function renderProductCard(p) {
-            const bundleHtml = p.is_bundle ? `
+            function renderProductCard(p) {
+                const bundleHtml = p.is_bundle ? `
                 <div class="bundle-badge">Bundle Package</div>
                 <div class="bundle-contents">
                     ${(p.bundle_items || []).map(bi => `• ${bi.product_name} x${bi.quantity}`).join('<br>')}
                 </div>
             ` : '';
 
-            return `
+                return `
                 <div class="product-card" data-id="${p.id}">
                     <div class="product-cat">${p.category || 'General'}</div>
                     ${bundleHtml}
@@ -942,77 +1006,77 @@
                     </div>
                 </div>
             `;
-        }
-
-        function changeQty(id, delta) {
-            const input = document.getElementById(`qty-${id}`);
-            let val = parseInt(input.value) || 1;
-            val = Math.max(1, Math.min(99, val + delta));
-            input.value = val;
-        }
-
-        function clampQty(id) {
-            const input = document.getElementById(`qty-${id}`);
-            let val = parseInt(input.value) || 1;
-            input.value = Math.max(1, Math.min(99, val));
-        }
-
-        function addToCart(productId) {
-            const product = allProducts.find(p => p.id === productId);
-            if (!product) return;
-
-            const qty = parseInt(document.getElementById(`qty-${productId}`).value) || 1;
-
-            const existing = cart.find(c => c.id === productId);
-            if (existing) {
-                existing.quantity += qty;
-            } else {
-                cart.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    quantity: qty
-                });
             }
 
-            // Visual feedback
-            const btn = document.getElementById(`addBtn-${productId}`);
-            btn.textContent = '✓ Added';
-            btn.classList.add('added');
-            setTimeout(() => {
-                btn.textContent = 'Add to Cart';
-                btn.classList.remove('added');
-            }, 1200);
-
-            updateCartUI();
-        }
-
-        function removeFromCart(productId) {
-            cart = cart.filter(c => c.id !== productId);
-            updateCartUI();
-        }
-
-        function updateCartUI() {
-            const count = cart.reduce((sum, c) => sum + c.quantity, 0);
-            const total = cart.reduce((sum, c) => sum + (c.price * c.quantity), 0);
-
-            document.getElementById('cartCount').textContent = count;
-            document.getElementById('cartTotal').textContent = total.toLocaleString() + ' Tk';
-
-            const body = document.getElementById('cartBody');
-            const footer = document.getElementById('cartFooter');
-
-            if (cart.length === 0) {
-                body.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
-                footer.style.display = 'none';
-                return;
+            function changeQty(id, delta) {
+                const input = document.getElementById(`qty-${id}`);
+                let val = parseInt(input.value) || 1;
+                val = Math.max(1, Math.min(99, val + delta));
+                input.value = val;
             }
 
-            footer.style.display = 'block';
+            function clampQty(id) {
+                const input = document.getElementById(`qty-${id}`);
+                let val = parseInt(input.value) || 1;
+                input.value = Math.max(1, Math.min(99, val));
+            }
 
-            let html = '';
-            cart.forEach(item => {
-                html += `
+            function addToCart(productId) {
+                const product = allProducts.find(p => p.id === productId);
+                if (!product) return;
+
+                const qty = parseInt(document.getElementById(`qty-${productId}`).value) || 1;
+
+                const existing = cart.find(c => c.id === productId);
+                if (existing) {
+                    existing.quantity += qty;
+                } else {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        quantity: qty
+                    });
+                }
+
+
+                const btn = document.getElementById(`addBtn-${productId}`);
+                btn.textContent = '✓ Added';
+                btn.classList.add('added');
+                setTimeout(() => {
+                    btn.textContent = 'Add to Cart';
+                    btn.classList.remove('added');
+                }, 1200);
+
+                updateCartUI();
+            }
+
+            function removeFromCart(productId) {
+                cart = cart.filter(c => c.id !== productId);
+                updateCartUI();
+            }
+
+            function updateCartUI() {
+                const count = cart.reduce((sum, c) => sum + c.quantity, 0);
+                const total = cart.reduce((sum, c) => sum + (c.price * c.quantity), 0);
+
+                document.getElementById('cartCount').textContent = count;
+                document.getElementById('cartTotal').textContent = total.toLocaleString() + ' Tk';
+
+                const body = document.getElementById('cartBody');
+                const footer = document.getElementById('cartFooter');
+
+                if (cart.length === 0) {
+                    body.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+                    footer.style.display = 'none';
+                    return;
+                }
+
+                footer.style.display = 'block';
+
+                let html = '';
+                cart.forEach(item => {
+                    html += `
                     <div class="cart-item">
                         <div class="cart-item-info">
                             <div class="cart-item-name">${item.name}</div>
@@ -1022,10 +1086,10 @@
                         <button class="cart-item-remove" onclick="removeFromCart(${item.id})">✕</button>
                     </div>
                 `;
-            });
+                });
 
-            // Invoice preview
-            html += `
+
+                html += `
                 <div class="invoice-preview">
                     <h4>Invoice Preview</h4>
                     <table>
@@ -1050,27 +1114,27 @@
                 </div>
             `;
 
-            body.innerHTML = html;
-        }
+                body.innerHTML = html;
+            }
 
-        function toggleCart() {
-            const panel = document.getElementById('cartPanel');
-            const overlay = document.getElementById('cartOverlay');
-            panel.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
+            function toggleCart() {
+                const panel = document.getElementById('cartPanel');
+                const overlay = document.getElementById('cartOverlay');
+                panel.classList.toggle('active');
+                overlay.classList.toggle('active');
+            }
 
-        function openCheckout() {
-            if (cart.length === 0) return;
-            toggleCart(); // Close cart
+            function openCheckout() {
+                if (cart.length === 0) return;
+                toggleCart(); // Close cart
 
-            const modal = document.getElementById('checkoutModal');
-            const content = document.getElementById('checkoutContent');
+                const modal = document.getElementById('checkoutModal');
+                const content = document.getElementById('checkoutContent');
 
-            const total = cart.reduce((sum, c) => sum + (c.price * c.quantity), 0);
-            const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                const total = cart.reduce((sum, c) => sum + (c.price * c.quantity), 0);
+                const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
-            content.innerHTML = `
+                content.innerHTML = `
                 <h2>📦 Place Your Order</h2>
                 <p class="subtitle">Total: ${total.toLocaleString()} Tk • ${today}</p>
 
@@ -1101,51 +1165,51 @@
                 </div>
             `;
 
-            modal.classList.add('flex');
-        }
-
-        function selectDelivery(el, value) {
-            document.querySelectorAll('.radio-option').forEach(r => r.classList.remove('selected'));
-            el.classList.add('selected');
-            document.getElementById('orderDelivery').value = value;
-        }
-
-        function closeCheckout() {
-            document.getElementById('checkoutModal').classList.remove('flex');
-        }
-
-        async function placeOrder() {
-            const name = document.getElementById('orderName').value.trim();
-            const phone = document.getElementById('orderPhone').value.trim();
-            const address = document.getElementById('orderAddress').value.trim();
-            const delivery = document.getElementById('orderDelivery').value;
-
-            if (!name || !phone || !address) {
-                alert('Please fill in all required fields.');
-                return;
+                modal.classList.add('flex');
             }
 
-            const btn = document.getElementById('placeOrderBtn');
-            btn.disabled = true;
-            btn.textContent = 'Placing order...';
+            function selectDelivery(el, value) {
+                document.querySelectorAll('.radio-option').forEach(r => r.classList.remove('selected'));
+                el.classList.add('selected');
+                document.getElementById('orderDelivery').value = value;
+            }
 
-            try {
-                const items = cart.map(c => ({
-                    product_name: c.name,
-                    quantity: c.quantity,
-                    unit_price: c.price
-                }));
+            function closeCheckout() {
+                document.getElementById('checkoutModal').classList.remove('flex');
+            }
 
-                const order = await DB.createOrder({
-                    customer_name: name,
-                    customer_phone: phone,
-                    customer_address: address,
-                    delivery_location: delivery
-                }, items);
+            async function placeOrder() {
+                const name = document.getElementById('orderName').value.trim();
+                const phone = document.getElementById('orderPhone').value.trim();
+                const address = document.getElementById('orderAddress').value.trim();
+                const delivery = document.getElementById('orderDelivery').value;
 
-                // Show confirmation
-                const content = document.getElementById('checkoutContent');
-                content.innerHTML = `
+                if (!name || !phone || !address) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+
+                const btn = document.getElementById('placeOrderBtn');
+                btn.disabled = true;
+                btn.textContent = 'Placing order...';
+
+                try {
+                    const items = cart.map(c => ({
+                        product_name: c.name,
+                        quantity: c.quantity,
+                        unit_price: c.price
+                    }));
+
+                    const order = await DB.createOrder({
+                        customer_name: name,
+                        customer_phone: phone,
+                        customer_address: address,
+                        delivery_location: delivery
+                    }, items);
+
+
+                    const content = document.getElementById('checkoutContent');
+                    content.innerHTML = `
                     <div class="confirmation">
                         <div class="check-icon">✅</div>
                         <h2>Order Placed!</h2>
@@ -1156,25 +1220,26 @@
                     </div>
                 `;
 
-                cart = [];
-                updateCartUI();
+                    cart = [];
+                    updateCartUI();
 
-            } catch (err) {
-                console.error(err);
-                alert('Failed to place order. Please try again.');
-                btn.disabled = false;
-                btn.textContent = '✓ Place Order';
+                } catch (err) {
+                    console.error(err);
+                    alert('Failed to place order. Please try again.');
+                    btn.disabled = false;
+                    btn.textContent = '✓ Place Order';
+                }
             }
-        }
 
-        function orderComplete() {
-            closeCheckout();
-        }
-    </script>
-    <div style="text-align:center; padding:20px; color:#6b7280; font-size:12px; margin-top:40px;">
+            function orderComplete() {
+                closeCheckout();
+            }
+        </script>
+    </main>
+    <footer style="text-align:center; padding:20px; color:#6b7280; font-size:12px; margin-top:40px;">
         &copy; 2026 Short Circuit. All rights reserved. • <a href="/login"
             style="color:#6b7280; text-decoration:none;">Admin Login</a>
-    </div>
+    </footer>
 </body>
 
 </html>

@@ -3,6 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Migrate Data - Short Circuit</title>
     <link rel="icon" href="Short Circuit .PNG">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -41,7 +43,7 @@
                 return;
             }
 
-            // Step 1: Clear existing products
+
             logDiv.innerHTML += '<p>Clearing existing products...</p>';
             const { error: delError } = await _supabase.from('products').delete().neq('id', 0);
             if (delError) {
@@ -50,7 +52,7 @@
             }
             logDiv.innerHTML += '<p style="color:green">Database cleared.</p>';
 
-            // Step 2: Prepare batch payload
+
             const payload = PRICE_LIST.map(item => ({
                 name: item.name,
                 price: item.selling_price || 0,
@@ -60,7 +62,7 @@
 
             logDiv.innerHTML += `<p>Inserting ${payload.length} items in batch...</p>`;
 
-            // Step 3: Batch insert (Supabase supports bulk insert)
+
             const { data, error } = await _supabase.from('products').insert(payload).select();
 
             if (error) {
@@ -70,7 +72,7 @@
 
             logDiv.innerHTML += `<p style="color:green; font-weight:bold;">✅ Successfully inserted ${data.length} items!</p>`;
 
-            // Show all uploaded items
+
             data.forEach(item => {
                 logDiv.innerHTML += `<p style="color:green; margin:2px 0; font-size:13px;">  ✓ ${item.name} (Buy: ${item.buying_price} Tk, Sell: ${item.price} Tk)</p>`;
             });

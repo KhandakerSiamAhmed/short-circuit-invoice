@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Order Management - Short Circuit</title>
     <link rel="icon" href="Short Circuit .PNG">
     <style>
@@ -392,7 +393,7 @@
             margin-bottom: 10px;
         }
 
-        /* === PRINT INVOICE STYLES (same as index.html) === */
+        /* print invoice */
         .print-invoice-page {
             display: none;
         }
@@ -731,10 +732,10 @@
     <script>
         let allOrders = [];
         let orderItemsCache = {};
-        let productStockCache = {}; // Cache for product stock levels
+        let productStockCache = {};
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Auth check happens in auth.js
+
             setTimeout(loadOrders, 500);
         });
 
@@ -813,7 +814,7 @@
 
             card.classList.add('expanded');
 
-            // Load products once to get current stock levels
+
             if (Object.keys(productStockCache).length === 0) {
                 const products = await DB.fetchProducts();
                 products.forEach(p => {
@@ -821,7 +822,7 @@
                 });
             }
 
-            // Load items if not cached
+
             if (!orderItemsCache[orderId]) {
                 orderItemsCache[orderId] = await DB.fetchOrderItems(orderId);
             }
@@ -952,20 +953,20 @@
             try {
                 const updated = await DB.updateOrderChecklist(orderId, field, newValue);
 
-                // Update local cache
+
                 const orderIdx = allOrders.findIndex(o => o.id === orderId);
                 if (orderIdx > -1) {
                     allOrders[orderIdx] = { ...allOrders[orderIdx], ...updated };
                 }
 
-                // Update complete button
+
                 const order = allOrders[orderIdx];
                 const completeBtn = document.getElementById(`completeBtn-${orderId}`);
                 if (completeBtn) {
                     completeBtn.disabled = !(order.ordered_to_wholesaler && order.got_supply && order.delivered);
                 }
 
-                // Update badge
+
                 const card = document.getElementById(`order-${orderId}`);
                 const badge = card.querySelector('.badge');
                 const status = getOrderStatus(order);
@@ -974,7 +975,7 @@
 
             } catch (err) {
                 console.error(err);
-                // Revert
+
                 checkbox.checked = !newValue;
                 el.classList.toggle('checked');
             }
@@ -995,7 +996,7 @@
                 const items = orderItemsCache[orderId];
                 if (!items) throw new Error('Items not loaded');
 
-                // Update stock for each product
+
                 for (const item of items) {
                     const prodData = productStockCache[item.product_name];
                     if (prodData && prodData.stock !== null) {
@@ -1007,23 +1008,23 @@
                     }
                 }
 
-                // Save status in order
+
                 const updated = await DB.updateOrderChecklist(orderId, 'stock_reduced', newValue);
 
-                // Update local cache
+
                 const orderIdx = allOrders.findIndex(o => o.id === orderId);
                 if (orderIdx > -1) {
                     allOrders[orderIdx].stock_reduced = newValue;
                 }
 
-                // Refresh details to show updated stock values in table
+
                 toggleOrder(orderId); // Close
                 toggleOrder(orderId); // Re-open
 
             } catch (err) {
                 console.error(err);
                 alert('Error updating stock: ' + err.message);
-                // Revert
+
                 checkbox.checked = !newValue;
                 el.classList.toggle('checked');
             }
@@ -1040,12 +1041,12 @@
                     allOrders[orderIdx].completed = true;
                 }
 
-                // Re-expand to show updated UI
+
                 const card = document.getElementById(`order-${orderId}`);
                 card.classList.remove('expanded');
                 toggleOrder(orderId);
 
-                // Update badge
+
                 const badge = card.querySelector('.badge');
                 badge.className = 'badge badge-completed';
                 badge.textContent = 'Completed';
@@ -1073,7 +1074,7 @@
                             <div class="brand-info">
                                 <h1>SHORT CIRCUIT</h1>
                                 <div class="tagline">Electronics Shop</div>
-                                <a href="https://www.facebook.com/ShortCircuitIUT" class="social" target="_blank">
+                                <a href="https://www.facebook.com/profile.php?id=61556341177118" class="social" target="_blank">
                                     <svg viewBox="0 0 24 24">
                                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                                     </svg>
@@ -1164,11 +1165,11 @@
             try {
                 await DB.deleteOrder(orderId);
 
-                // Remove from local list
+
                 allOrders = allOrders.filter(o => o.id !== orderId);
                 delete orderItemsCache[orderId];
 
-                // Re-render
+
                 renderOrders(allOrders);
 
             } catch (err) {

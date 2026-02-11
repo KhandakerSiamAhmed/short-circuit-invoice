@@ -9,13 +9,13 @@ const Auth = {
         const { data: { session } } = await _supabase.auth.getSession();
 
         // If no session and we are NOT on the login page, redirect
-        if (!session && !window.location.href.includes('login.html')) {
-            window.location.href = 'login.html';
+        if (!session && !window.location.href.includes('login')) {
+            window.location.href = '/login';
         }
 
         // If session and we ARE on the login page, redirect to index
-        if (session && window.location.href.includes('login.html')) {
-            window.location.href = 'invoice.html';
+        if (session && window.location.href.includes('login')) {
+            window.location.href = '/invoice';
         }
 
         return session;
@@ -33,7 +33,7 @@ const Auth = {
     async logout() {
         const { error } = await _supabase.auth.signOut();
         if (error) throw error;
-        window.location.href = 'login.html';
+        window.location.href = '/login';
     }
 };
 

@@ -548,9 +548,28 @@
             color: #1a1a2e;
         }
 
+        .print-invoice-page .print-page {
+            width: 210mm;
+            height: 297mm;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            page-break-after: always;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .print-invoice-page .print-page:last-child {
+            page-break-after: auto;
+        }
+
         .print-invoice-page .invoice-footer {
-            background: #f8f9fa;
-            padding: 25px 40px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 20px 40px 30px 40px;
             text-align: center;
             border-top: 1px solid #dee2e6;
         }
@@ -574,8 +593,14 @@
         }
 
         @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
             body {
                 padding: 0;
+                margin: 0;
                 background: white;
             }
 
@@ -588,6 +613,23 @@
 
             .print-invoice-page {
                 display: block !important;
+            }
+
+            .print-invoice-page .invoice-header {
+                padding: 20px 40px;
+            }
+
+            .print-invoice-page .meta-section {
+                padding: 10px 40px;
+            }
+
+            .print-invoice-page .items-section {
+                padding: 10px 40px;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
         }
 
@@ -954,85 +996,88 @@
 
             const printArea = document.getElementById('printInvoice');
             printArea.innerHTML = `
-                <div class="invoice-header">
-                    <div class="brand">
-                        <img src="Short Circuit .PNG" alt="Logo">
-                        <div class="brand-info">
-                            <h1>SHORT CIRCUIT</h1>
-                            <div class="tagline">Electronics Shop</div>
-                            <a href="https://www.facebook.com/ShortCircuitIUT" class="social" target="_blank">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                                </svg>
-                                ShortCircuitIUT
-                            </a>
+                <div class="print-page">
+                    <div class="invoice-header">
+                        <div class="brand">
+                            <img src="Short Circuit .PNG" alt="Logo">
+                            <div class="brand-info">
+                                <h1>SHORT CIRCUIT</h1>
+                                <div class="tagline">Electronics Shop</div>
+                                <a href="https://www.facebook.com/ShortCircuitIUT" class="social" target="_blank">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                    </svg>
+                                    ShortCircuitIUT
+                                </a>
+                            </div>
+                        </div>
+                        <div class="invoice-title">
+                            <h2>INVOICE</h2>
+                            <div class="inv-num">#${orderNo}</div>
                         </div>
                     </div>
-                    <div class="invoice-title">
-                        <h2>INVOICE</h2>
-                        <div class="inv-num">#${orderNo}</div>
-                    </div>
-                </div>
 
-                <div class="meta-section">
-                    <div class="meta-block">
-                        <h4>Bill To</h4>
-                        <p><strong>${order.customer_name}</strong></p>
-                        <p>${order.customer_phone}</p>
-                        <p>${order.customer_address}</p>
+                    <div class="meta-section">
+                        <div class="meta-block">
+                            <h4>Bill To</h4>
+                            <p><strong>${order.customer_name}</strong></p>
+                            <p>${order.customer_phone}</p>
+                            <p>${order.customer_address}</p>
+                        </div>
+                        <div class="meta-block" style="text-align:right;">
+                            <h4>Invoice Date</h4>
+                            <p>${date}</p>
+                            <h4 style="margin-top:12px;">Delivery</h4>
+                            <p>${order.delivery_location}</p>
+                        </div>
                     </div>
-                    <div class="meta-block" style="text-align:right;">
-                        <h4>Invoice Date</h4>
-                        <p>${date}</p>
-                        <h4 style="margin-top:12px;">Delivery</h4>
-                        <p>${order.delivery_location}</p>
-                    </div>
-                </div>
 
-                <div class="items-section">
-                    <table class="inv-items-table">
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th class="right">Qty</th>
-                                <th class="right">Unit Price</th>
-                                <th class="right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${items.map(item => `
+                    <div class="items-section">
+                        <table class="inv-items-table">
+                            <thead>
                                 <tr>
-                                    <td>${item.product_name}</td>
-                                    <td class="right">${item.quantity}</td>
-                                    <td class="right">${item.unit_price} Tk</td>
-                                    <td class="right">${(item.quantity * item.unit_price).toLocaleString()} Tk</td>
+                                    <th>Description</th>
+                                    <th class="right">Qty</th>
+                                    <th class="right">Unit Price</th>
+                                    <th class="right">Total</th>
                                 </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                ${items.map(item => `
+                                    <tr>
+                                        <td>${item.product_name}</td>
+                                        <td class="right">${item.quantity}</td>
+                                        <td class="right">${item.unit_price} Tk</td>
+                                        <td class="right">${(item.quantity * item.unit_price).toLocaleString()} Tk</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
 
-                <div class="summary-section">
-                    <div class="summary-box">
-                        <div class="summary-row">
-                            <span>Subtotal</span>
-                            <span>${total.toLocaleString()} Tk</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Delivery</span>
-                            <span>${deliveryCharge > 0 ? deliveryCharge + ' Tk' : 'Free'}</span>
-                        </div>
-                        <div class="summary-row total">
-                            <span>Total</span>
-                            <span>${(total + deliveryCharge).toLocaleString()} Tk</span>
+                    <div class="summary-section">
+                        <div class="summary-box">
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span>${total.toLocaleString()} Tk</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Delivery</span>
+                                <span>${deliveryCharge > 0 ? deliveryCharge + ' Tk' : 'Free'}</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total</span>
+                                <span>${(total + deliveryCharge).toLocaleString()} Tk</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="invoice-footer">
-                    <p class="footer-note">This is a system generated invoice, no signature required.</p>
-                    <p class="footer-thanks">Thank you for shopping with Short Circuit!</p>
-                    <p class="footer-contact">For queries, contact us on our Facebook page.</p>
+                    <div class="invoice-footer">
+                        <p class="footer-note">This is a system generated invoice, no signature required.</p>
+                        <p class="footer-thanks">Thank you for shopping with Short Circuit!</p>
+                        <p class="footer-contact">For queries, contact us on our Facebook page.</p>
+                        <p style="margin-top:5px;font-weight:600;font-size:0.8em;color:#1a1a2e">Page 1 of 1</p>
+                    </div>
                 </div>
             `;
 

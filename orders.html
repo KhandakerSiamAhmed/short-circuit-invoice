@@ -362,6 +362,15 @@
             cursor: not-allowed;
         }
 
+        .btn-delete {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #b91c1c;
+        }
+
         /* Loading */
         .loading {
             text-align: center;
@@ -382,7 +391,188 @@
             margin-bottom: 10px;
         }
 
-        /* === PRINT INVOICE === */
+        /* === PRINT INVOICE STYLES (same as index.html) === */
+        .print-invoice-page {
+            display: none;
+        }
+
+        .print-invoice-page .invoice-header {
+            background: #1a1a2e;
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .print-invoice-page .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .print-invoice-page .brand img {
+            height: 70px;
+            border-radius: 8px;
+        }
+
+        .print-invoice-page .brand-info h1 {
+            font-size: 1.6em;
+            margin-bottom: 2px;
+        }
+
+        .print-invoice-page .brand-info .tagline {
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+
+        .print-invoice-page .brand-info .social {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 0.85em;
+            opacity: 0.9;
+            color: white;
+            text-decoration: none;
+        }
+
+        .print-invoice-page .brand-info .social svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+        }
+
+        .print-invoice-page .invoice-title {
+            text-align: right;
+        }
+
+        .print-invoice-page .invoice-title h2 {
+            font-size: 2.2em;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .print-invoice-page .invoice-title .inv-num {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .print-invoice-page .meta-section {
+            display: flex;
+            justify-content: space-between;
+            padding: 30px 40px 20px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .print-invoice-page .meta-block h4 {
+            color: #6c757d;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .print-invoice-page .meta-block p {
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #212529;
+        }
+
+        .print-invoice-page .items-section {
+            padding: 20px 40px;
+        }
+
+        .print-invoice-page .inv-items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .print-invoice-page .inv-items-table th {
+            background: #f8f9fa;
+            padding: 14px 12px;
+            text-align: left;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .print-invoice-page .inv-items-table th.right {
+            text-align: right;
+        }
+
+        .print-invoice-page .inv-items-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95em;
+        }
+
+        .print-invoice-page .inv-items-table td.right {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .print-invoice-page .inv-items-table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .print-invoice-page .summary-section {
+            display: flex;
+            justify-content: flex-end;
+            padding: 0 40px 20px;
+        }
+
+        .print-invoice-page .summary-box {
+            width: 280px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .print-invoice-page .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.95em;
+        }
+
+        .print-invoice-page .summary-row.total {
+            border-top: 2px solid #1a1a2e;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .print-invoice-page .invoice-footer {
+            background: #f8f9fa;
+            padding: 25px 40px;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .print-invoice-page .footer-note {
+            font-style: italic;
+            color: #6c757d;
+            margin-bottom: 5px;
+            font-size: 0.85em;
+        }
+
+        .print-invoice-page .footer-thanks {
+            color: #212529;
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+
+        .print-invoice-page .footer-contact {
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+
         @media print {
             body {
                 padding: 0;
@@ -391,37 +581,14 @@
 
             header,
             .filters,
-            .no-print {
+            .no-print,
+            .container {
                 display: none !important;
-            }
-
-            .order-card {
-                border: none;
-                box-shadow: none;
-                margin: 0;
-            }
-
-            .order-card:not(.printing) {
-                display: none !important;
-            }
-
-            .order-card.printing .order-summary {
-                display: none;
-            }
-
-            .order-card.printing .order-details {
-                display: block !important;
-                padding: 0;
-                border: none;
             }
 
             .print-invoice-page {
                 display: block !important;
             }
-        }
-
-        .print-invoice-page {
-            display: none;
         }
 
         /* MOBILE */
@@ -701,6 +868,9 @@
                             ✓ Mark Completed
                         </button>
                     ` : ''}
+                    <button class="btn-action btn-delete" onclick="deleteOrder(${orderId}, '${(order.order_no || 'SC-' + String(order.id).padStart(4, '0')).replace(/'/g, "\\'")}')">
+                        🗑️ Delete Order
+                    </button>
                 </div>
             `;
         }
@@ -780,79 +950,89 @@
             const total = items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0);
             const deliveryCharge = order.delivery_location === 'Outside IUT' ? 120 : 0;
             const date = new Date(order.order_date || order.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            const orderNo = order.order_no || 'SC-' + String(order.id).padStart(4, '0');
 
             const printArea = document.getElementById('printInvoice');
             printArea.innerHTML = `
-                <div style="width:210mm; min-height:297mm; padding:40px; font-family:'Inter',sans-serif; position:relative;">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:3px solid #1a1a2e; padding-bottom:20px; margin-bottom:25px;">
-                        <div>
-                            <h1 style="font-size:28px; color:#1a1a2e; margin:0;">SHORT CIRCUIT</h1>
-                            <p style="color:#6b7280; font-size:13px; margin:3px 0 0;">Electronics Shop • IUT</p>
-                        </div>
-                        <div style="text-align:right;">
-                            <h2 style="font-size:22px; color:#1a1a2e; margin:0;">INVOICE</h2>
-                            <p style="color:#6b7280; font-size:14px; margin:3px 0 0;">#${order.order_no || 'SC-' + String(order.id).padStart(4, '0')}</p>
-                            <p style="color:#6b7280; font-size:13px; margin:3px 0 0;">${date}</p>
-                        </div>
-                    </div>
-
-                    <div style="display:flex; justify-content:space-between; margin-bottom:30px;">
-                        <div>
-                            <h4 style="font-size:11px; text-transform:uppercase; color:#6b7280; margin:0 0 8px;">Bill To</h4>
-                            <p style="font-weight:600; font-size:15px; margin:0;">${order.customer_name}</p>
-                            <p style="color:#6b7280; font-size:13px; margin:4px 0;">${order.customer_phone}</p>
-                            <p style="color:#6b7280; font-size:13px; margin:0;">${order.customer_address}</p>
-                        </div>
-                        <div style="text-align:right;">
-                            <h4 style="font-size:11px; text-transform:uppercase; color:#6b7280; margin:0 0 8px;">Delivery</h4>
-                            <p style="font-weight:600; font-size:14px; margin:0;">${order.delivery_location}</p>
+                <div class="invoice-header">
+                    <div class="brand">
+                        <img src="Short Circuit .PNG" alt="Logo">
+                        <div class="brand-info">
+                            <h1>SHORT CIRCUIT</h1>
+                            <div class="tagline">Electronics Shop</div>
+                            <a href="https://www.facebook.com/ShortCircuitIUT" class="social" target="_blank">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                </svg>
+                                ShortCircuitIUT
+                            </a>
                         </div>
                     </div>
+                    <div class="invoice-title">
+                        <h2>INVOICE</h2>
+                        <div class="inv-num">#${orderNo}</div>
+                    </div>
+                </div>
 
-                    <table style="width:100%; border-collapse:collapse; font-size:14px; margin-bottom:30px;">
+                <div class="meta-section">
+                    <div class="meta-block">
+                        <h4>Bill To</h4>
+                        <p><strong>${order.customer_name}</strong></p>
+                        <p>${order.customer_phone}</p>
+                        <p>${order.customer_address}</p>
+                    </div>
+                    <div class="meta-block" style="text-align:right;">
+                        <h4>Invoice Date</h4>
+                        <p>${date}</p>
+                        <h4 style="margin-top:12px;">Delivery</h4>
+                        <p>${order.delivery_location}</p>
+                    </div>
+                </div>
+
+                <div class="items-section">
+                    <table class="inv-items-table">
                         <thead>
-                            <tr style="background:#1a1a2e; color:white;">
-                                <th style="padding:10px 15px; text-align:left;">#</th>
-                                <th style="padding:10px 15px; text-align:left;">Product</th>
-                                <th style="padding:10px 15px; text-align:center;">Qty</th>
-                                <th style="padding:10px 15px; text-align:right;">Price</th>
-                                <th style="padding:10px 15px; text-align:right;">Total</th>
+                            <tr>
+                                <th>Description</th>
+                                <th class="right">Qty</th>
+                                <th class="right">Unit Price</th>
+                                <th class="right">Total</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${items.map((item, i) => `
-                                <tr style="border-bottom:1px solid #e5e7eb;">
-                                    <td style="padding:10px 15px;">${i + 1}</td>
-                                    <td style="padding:10px 15px;">${item.product_name}</td>
-                                    <td style="padding:10px 15px; text-align:center;">${item.quantity}</td>
-                                    <td style="padding:10px 15px; text-align:right;">${item.unit_price} Tk</td>
-                                    <td style="padding:10px 15px; text-align:right;">${(item.quantity * item.unit_price).toLocaleString()} Tk</td>
+                            ${items.map(item => `
+                                <tr>
+                                    <td>${item.product_name}</td>
+                                    <td class="right">${item.quantity}</td>
+                                    <td class="right">${item.unit_price} Tk</td>
+                                    <td class="right">${(item.quantity * item.unit_price).toLocaleString()} Tk</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
+                </div>
 
-                    <div style="display:flex; justify-content:flex-end;">
-                        <table style="width:250px; font-size:14px;">
-                            <tr>
-                                <td style="padding:6px 0;">Subtotal</td>
-                                <td style="padding:6px 0; text-align:right; font-weight:600;">${total.toLocaleString()} Tk</td>
-                            </tr>
-                            <tr>
-                                <td style="padding:6px 0;">Delivery</td>
-                                <td style="padding:6px 0; text-align:right;">${deliveryCharge > 0 ? deliveryCharge + ' Tk' : 'Free'}</td>
-                            </tr>
-                            <tr style="border-top:2px solid #1a1a2e;">
-                                <td style="padding:10px 0; font-weight:700; font-size:16px;">Total</td>
-                                <td style="padding:10px 0; text-align:right; font-weight:700; font-size:16px;">${(total + deliveryCharge).toLocaleString()} Tk</td>
-                            </tr>
-                        </table>
+                <div class="summary-section">
+                    <div class="summary-box">
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span>${total.toLocaleString()} Tk</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Delivery</span>
+                            <span>${deliveryCharge > 0 ? deliveryCharge + ' Tk' : 'Free'}</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <span>${(total + deliveryCharge).toLocaleString()} Tk</span>
+                        </div>
                     </div>
+                </div>
 
-                    <div style="position:absolute; bottom:40px; left:40px; right:40px; text-align:center; border-top:1px solid #e5e7eb; padding-top:15px;">
-                        <p style="font-size:12px; color:#6b7280;">Thank you for shopping with Short Circuit!</p>
-                        <p style="font-size:11px; color:#9ca3af;">fb.com/ShortCircuitIUT</p>
-                    </div>
+                <div class="invoice-footer">
+                    <p class="footer-note">This is a system generated invoice, no signature required.</p>
+                    <p class="footer-thanks">Thank you for shopping with Short Circuit!</p>
+                    <p class="footer-contact">For queries, contact us on our Facebook page.</p>
                 </div>
             `;
 
@@ -861,6 +1041,25 @@
                 window.print();
                 printArea.style.display = 'none';
             }, 300);
+        }
+
+        async function deleteOrder(orderId, orderNo) {
+            if (!confirm(`Delete order ${orderNo}? This order number will become available again.`)) return;
+
+            try {
+                await DB.deleteOrder(orderId);
+
+                // Remove from local list
+                allOrders = allOrders.filter(o => o.id !== orderId);
+                delete orderItemsCache[orderId];
+
+                // Re-render
+                renderOrders(allOrders);
+
+            } catch (err) {
+                console.error(err);
+                alert('Error deleting order.');
+            }
         }
     </script>
 </body>

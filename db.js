@@ -160,5 +160,18 @@ const DB = {
             throw error;
         }
         return data;
+    },
+
+    // Delete an order (cascade deletes items)
+    async deleteOrder(orderId) {
+        const { error } = await _supabase
+            .from('orders')
+            .delete()
+            .eq('id', orderId);
+
+        if (error) {
+            console.error('Error deleting order:', error);
+            throw error;
+        }
     }
 };

@@ -158,6 +158,20 @@
             color: white;
         }
 
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(108, 117, 125, 0.4);
+        }
+
         .btn-add {
             background: transparent;
             border: 2px dashed var(--accent);
@@ -758,6 +772,7 @@
         </div>
 
         <button class="btn btn-primary" onclick="printInvoice()">🖨️ Print Invoice</button>
+        <button class="btn btn-secondary" onclick="generateServerPDF()">⬇️ Download PDF (Server)</button>
     </div>
 
     <!-- INVOICE PREVIEW (SCREEN ONLY) -->
@@ -1213,6 +1228,10 @@
                 window.print();
                 element.style.display = 'none';
             }, 500);
+        }
+
+        function generateServerPDF() {
+            alert("Server-side PDF generation is not yet implemented. Please use the Print Invoice button.");
         }
     </script>
 </body>

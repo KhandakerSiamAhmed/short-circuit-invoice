@@ -583,6 +583,15 @@
             font-size: 0.85em;
         }
 
+        .btn-download {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-download:hover {
+            background-color: #5a6268;
+        }
+
         .print-invoice-page .footer-thanks {
             color: #212529;
             font-weight: 500;
@@ -934,7 +943,8 @@
                 `}
 
                 <div class="order-actions">
-                    <button class="btn-action btn-invoice" onclick="generateInvoice(${orderId})">🖨️ Generate Invoice</button>
+                    <button class="btn-action btn-invoice" onclick="generateInvoice(${orderId})">🖨️ Print Invoice</button>
+                    <button class="btn-action btn-download" onclick="downloadServerInvoice(${orderId})">⬇️ Download PDF</button>
                     ${!order.completed ? `
                         <button class="btn-action btn-complete" id="completeBtn-${orderId}"
                             ${!(order.ordered_to_wholesaler && order.got_supply && order.delivered) ? 'disabled' : ''}
@@ -1194,6 +1204,10 @@
                 console.error(err);
                 alert('Error deleting order.');
             }
+        }
+
+        function downloadServerInvoice(orderId) {
+            alert("Server-side PDF generation is not yet implemented for order #" + orderId + ". Please use the native Print Invoice button.");
         }
     </script>
 </body>

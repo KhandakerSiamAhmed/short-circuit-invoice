@@ -60,6 +60,7 @@ const DB = {
             .from('orders')
             .insert([{
                 customer_name: orderData.customer_name,
+                customer_email: orderData.customer_email,
                 customer_phone: orderData.customer_phone,
                 customer_address: orderData.customer_address,
                 delivery_location: orderData.delivery_location

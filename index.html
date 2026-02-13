@@ -1148,6 +1148,10 @@
                     <input type="tel" id="orderPhone" placeholder="01XXXXXXXXX" required>
                 </div>
                 <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" id="orderEmail" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
                     <label>Address *</label>
                     <textarea id="orderAddress" placeholder="Room, Hall, or delivery address"></textarea>
                 </div>
@@ -1182,10 +1186,11 @@
             async function placeOrder() {
                 const name = document.getElementById('orderName').value.trim();
                 const phone = document.getElementById('orderPhone').value.trim();
+                const email = document.getElementById('orderEmail').value.trim();
                 const address = document.getElementById('orderAddress').value.trim();
                 const delivery = document.getElementById('orderDelivery').value;
 
-                if (!name || !phone || !address) {
+                if (!name || !phone || !email || !address) {
                     alert('Please fill in all required fields.');
                     return;
                 }
@@ -1203,6 +1208,7 @@
 
                     const order = await DB.createOrder({
                         customer_name: name,
+                        customer_email: email,
                         customer_phone: phone,
                         customer_address: address,
                         delivery_location: delivery

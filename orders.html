@@ -788,6 +788,7 @@
                                 <div class="order-no">${order.order_no || 'SC-' + String(order.id).padStart(4, '0')}</div>
                                 <div class="order-meta">
                                     <span>👤 ${order.customer_name}</span>
+                                    <span>📧 ${order.customer_email || 'No Email'}</span>
                                     <span>📅 ${date}</span>
                                     <span>📍 ${order.delivery_location}</span>
                                 </div>
@@ -850,9 +851,15 @@
                             <div class="value">${order.delivery_location}</div>
                         </div>
                     </div>
-                    <div class="info-block" style="margin-top:8px;">
-                        <div class="label">Address</div>
-                        <div class="value">${order.customer_address}</div>
+                    <div class="customer-info" style="margin-top:8px;">
+                         <div class="info-block">
+                            <div class="label">Email</div>
+                            <div class="value">${order.customer_email || 'N/A'}</div>
+                        </div>
+                         <div class="info-block" style="grid-column: span 2;">
+                            <div class="label">Address</div>
+                            <div class="value">${order.customer_address}</div>
+                        </div>
                     </div>
                 </div>
 
@@ -1093,6 +1100,7 @@
                             <h4>Bill To</h4>
                             <p><strong>${order.customer_name}</strong></p>
                             <p>${order.customer_phone}</p>
+                            <p>${order.customer_email || ''}</p>
                             <p>${order.customer_address}</p>
                         </div>
                         <div class="meta-block" style="text-align:right;">

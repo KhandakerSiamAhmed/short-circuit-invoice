@@ -606,15 +606,18 @@
                 background: white;
             }
 
-            header,
-            .filters,
-            .no-print,
-            .container {
+            body>*:not(#printInvoice) {
                 display: none !important;
             }
 
-            .print-invoice-page {
+            #printInvoice {
                 display: block !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                margin: 0;
+                padding: 0;
             }
 
             .print-invoice-page .invoice-header {

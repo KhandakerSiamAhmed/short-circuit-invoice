@@ -106,8 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // Using Gemini 2.5 Flash for faster, responsive chat if available, or fallback to Gemini Pro
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            // Using Gemini 2.0 Flash for stable, responsive chat
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+            console.log('[AI Receptionist] Sending request to Gemini API...');
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -117,7 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             });
 
+            console.log('[AI Receptionist] Response status:', response.status, response.statusText);
             const data = await response.json();
+            console.log('[AI Receptionist] Response data:', JSON.stringify(data).substring(0, 500));
             hideTyping();
             sendBtn.disabled = false;
 
@@ -126,11 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 chatHistory.push({ role: "model", parts: [{ text: botReply }] });
                 addMessage(botReply, 'bot');
             } else if (data.error) {
-                console.error("Gemini API Error details:", data.error);
-                let errorMessage = "API Error. Please check the console.";
-                if (data.error.code === 400) errorMessage = "Invalid API Key or Bad Request.";
-                addMessage(`Oops! ${errorMessage}`, 'bot');
+                console.error("[AI Receptionist] Gemini API Error:", data.error);
+                addMessage(`Sorry, I hit a snag (Error ${data.error.code}): ${data.error.message}`, 'bot');
             } else {
+                console.warn("[AI Receptionist] Unexpected response shape:", data);
                 addMessage("I'm sorry, I couldn't process that right now. Please try again later.", 'bot');
             }
         } catch (error) {

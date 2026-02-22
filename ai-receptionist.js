@@ -106,8 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // Using Gemini 1.5 Flash for faster, responsive chat if available, or fallback to Gemini 1.5 Pro
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            // Using Gemini 2.5 Flash for faster, responsive chat if available, or fallback to Gemini Pro
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
